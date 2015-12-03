@@ -131,6 +131,7 @@ void exploreChild(Node child, vector< vector<Node> > path, int depth) {
 	}
 	currentPath = path[depth];
 	printf("%i numChildren: %i\n", child.getValue(), child.getNumChildren());
+	child.printNode();
 	for (int i = 0; i < child.getNumChildren(); i++) {
 		printf("WEEEE%i\n", child.getValue());
 		Node newChild = child.getChildren()[i];
