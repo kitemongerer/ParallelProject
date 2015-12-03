@@ -89,9 +89,9 @@ __global__ void allPrefixSums(int *d_array, int *d_size, int *d_base) {
 	}
 }*/
 
-Node** generateGraph(int nNodes, int maxEdgesPerNode) {
+Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	srand((unsigned)time(0)); 
-	Node** nodes = new Node*[nNodes];
+	Node* nodes = new Node[nNodes];
 	for (int i = 0; i < nNodes; i++) {
 		Node* tmp = new Node(i);
 		nodes[i] = tmp;
@@ -99,24 +99,24 @@ Node** generateGraph(int nNodes, int maxEdgesPerNode) {
 
 	for (int i = 0; i < nNodes; i++) {
 		int numEdges = rand() % (maxEdgesPerNode + 1);
-		nodes[i]->initializeChildren(numEdges);
+		nodes[i].initializeChildren(numEdges);
 		for (int j = 0; j < numEdges; j++) {
 			int child = rand() % nNodes;
 			bool isChild = false;
-			for (int k = 0; k < nodes[i]->getNumChildren(); k++){
-				if (child == nodes[i]->getChildren()[k]->getValue()){
+			for (int k = 0; k < nodes[i].getNumChildren(); k++){
+				if (child == nodes[i].getChildren()[k]->getValue()){
 					isChild = true;
 					break;
 				}
 			}
-			if (!isChild && child != nodes[i]->getValue()){
-				nodes[i]->addChild(nodes[child]);
+			if (!isChild && child != nodes[i].getValue()){
+				nodes[i].addChild(nodes[child]);
 			}
 		}
 	}
 	
 	for (int i = 0; i < nNodes; i++) {
-		nodes[i]->printNode();
+		nodes[i].printNode();
 	}
 
 	return nodes; 
@@ -165,7 +165,7 @@ int main (int argc, char **argv) {
 	int size = atoi(argv[1]);
 	int maxEdgesPerNode = atoi(argv[2]);
 
-	Node** nodes = generateGraph(size, maxEdgesPerNode);
+	Node* nodes = generateGraph(size, maxEdgesPerNode);
 	vector< vector<Node*> > path = bfs(nodes, size);
 
 	for (int i = 0; i < path.size(); i++) {
