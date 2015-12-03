@@ -122,6 +122,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 }
 
 void exploreChild(Node child, vector< vector<Node> > path, int depth) {
+	printf("Explore Child%i\n", child.getValue());
 	vector<Node> currentPath;
 	if (path.size() <= depth) {
 		path.push_back(currentPath);
