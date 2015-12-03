@@ -5,6 +5,8 @@
 // CUDA runtime
 #include <cuda_runtime.h>
 
+#include "node.h"
+
 // Thread block size
 #define TBS 512
 
@@ -66,32 +68,27 @@ __global__ void allPrefixSums(int *d_array, int *d_size, int *d_base) {
 	}
 }
 
-void calcBase(int *d_base, int size, int *d_array) {
-	int *d_baseSize, *d_arrSize;
-	cudaMalloc((void **)&d_baseSize, sizeof(int));
-	cudaMalloc((void **)&d_arrSize, sizeof(int));
-
-	int baseSize = ceil(size / TBS) + 1;
-	int *d_newBase;
-	cudaMalloc((void **)&d_newBase, ceil(((float) baseSize) / TBS) * sizeof(int));
-	
-	int gridSz = ceil(((float) baseSize) / TBS);
-	cudaMemcpy(d_baseSize, &baseSize, sizeof(int), cudaMemcpyHostToDevice);
-	allPrefixSums<<<gridSz, TBS>>>(d_base, d_baseSize, d_newBase);
-	
-	cudaDeviceSynchronize();
-
-	if (baseSize > TBS) {		
-		calcBase(d_newBase, baseSize, d_base);
+Node* generateGraph(int nNodes, int maxEdgesPerNode) {
+	srand((unsigned)time(0)); 
+	Node* nodes = new Node[nNodes];
+	for (int i = 0; i < nNodes; i++) {
+		nodes[i] = new Node(i);
 	}
 
-	cudaMemcpy(d_arrSize, &size, sizeof(int), cudaMemcpyHostToDevice);
-	gridSz = ceil(((float) size) / TBS);
-	addBase<<<gridSz, TBS>>>(d_array, d_arrSize, d_base);
+	for (int i = 0; i < nNodes; i++) {
+		int numEdges = rand() % maxEdgesPerNode;
+		for (int j = 0; j < numEdges; j++) {
+			//TODO don't repear Children #########################################################################################################
+			int child = rand() % nNodes;
+			nodes[i].addChild(nodes[child]);
+		}
+	}
 	
-	cudaDeviceSynchronize();
-	
-	return; 
+	for (int i = 0; i < nNodes; i++) {
+		nodes[i].printNode();
+	}
+
+	return nodes; 
 }
 
 int main (int argc, char **argv) {
@@ -111,7 +108,7 @@ int main (int argc, char **argv) {
 		array[i] = (rand() % 1000) + 1;
 	}
 
-	int *d_array, *d_base, *d_size;
+	/*int *d_array, *d_base, *d_size;
 
 	// Allocate space for device copies
 	cudaMalloc((void **)&d_array, size * sizeof(int));
@@ -180,7 +177,7 @@ int main (int argc, char **argv) {
 
 	// Cleanup
 	cudaFree(d_array); 
-	cudaFree(d_size); 
+	cudaFree(d_size); */
 
 	return 0;
 }
