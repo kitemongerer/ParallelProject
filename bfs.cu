@@ -128,12 +128,13 @@ void exploreChild(Node child, vector< vector<Node> > path, int depth) {
 	}
 	currentPath = path[depth];
 	for (int i = 0; i < child.getNumChildren(); i++) {
-		currentPath.push_back(child.getChildren()[i]);
-		exploreChild(child.getChildren()[i], path, depth + 1);
+		if (child.getExplored() != 2) {
+			currentPath.push_back(child.getChildren()[i]);
+			exploreChild(child.getChildren()[i], path, depth + 1);	
+		}
 	}
 
-
-
+	child.setExplored(2);
 	return;
 }
 
