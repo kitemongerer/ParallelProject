@@ -104,13 +104,13 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 			int child = rand() % nNodes;
 			bool isChild = false;
 			for (int k = 0; k < nodes[i].getNumChildren(); k++){
-				if (child == &(nodes[i].getChildren()[k]).getValue()){
+				if (child == nodes[i].getChildren()[k].getValue()){
 					isChild = true;
 					break;
 				}
 			}
 			if (!isChild && child != nodes[i].getValue()){
-				nodes[i].addChild(nodes[child]);
+				nodes[i].addChild(&nodes[child]);
 			}
 		}
 	}
