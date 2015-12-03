@@ -167,8 +167,9 @@ int main (int argc, char **argv) {
 	vector< vector<Node*> > path = bfs(nodes, size);
 
 	for (int i = 0; i < path.size(); i++) {
+		printf("%i - ", i);
 		for (int j = 0; j < path[i].size(); j++) {
-			printf("%i - %i ", i, path[i][j]->getValue());
+			printf(" %i ", path[i][j]->getValue());
 		}
 		printf("\n");
 	}
