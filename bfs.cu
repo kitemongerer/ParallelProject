@@ -124,13 +124,14 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 
 void exploreChild(Node child, vector< vector<Node> > path, int depth) {
 	printf("Explore Child%i\n", child.getValue());
+	child.setExplored(1);
 	vector<Node> currentPath;
 	if (path.size() <= depth) {
 		path.push_back(currentPath);
 	}
 	currentPath = path[depth];
 	for (int i = 0; i < child.getNumChildren(); i++) {
-		if (child.getExplored() != 2) {
+		if (child.getExplored() == 0) {
 			currentPath.push_back(child.getChildren()[i]);
 			exploreChild(child.getChildren()[i], path, depth + 1);	
 		}
@@ -141,7 +142,6 @@ void exploreChild(Node child, vector< vector<Node> > path, int depth) {
 }
 
 vector< vector<Node> > bfs(Node* nodes, int size) {
-	printf("BFS\n");
 	vector< vector<Node> > path;
 
 	Node currentNode = nodes[0];
