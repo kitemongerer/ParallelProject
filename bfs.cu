@@ -96,7 +96,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 		Node* tmp = new Node(i);
 		nodes[i] = *tmp;
 	}
-
+printf("HERE\n");
 	for (int i = 0; i < nNodes; i++) {
 		int numEdges = rand() % (maxEdgesPerNode + 1);
 		nodes[i].initializeChildren(numEdges);
@@ -109,9 +109,9 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 					break;
 				}
 			}
-			/*if (!isChild && child != nodes[i].getValue()){
+			if (!isChild && child != nodes[i].getValue()){
 				nodes[i].addChild(nodes[child]);
-			}*/
+			}
 		}
 	}
 	
