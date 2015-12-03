@@ -262,7 +262,7 @@ int Node::getNumChildren() {
 	return numChildren;
 }
 
-void Node::addChild(Node child) {
+void Node::addChild(Node* child) {
 	children[numChildren] = child;
 	numChildren++;
 
