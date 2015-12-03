@@ -110,7 +110,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 				}
 			}
 			if (!isChild && child != nodes[i].getValue()){
-				nodes[i].addChild(nodes[child]);
+				nodes[i].addChild(&nodes[child]);
 			}
 		}
 	}
@@ -146,10 +146,10 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
 	return;
 }
 
-vector< vector<Node*> > bfs(Node** nodes, int size) {
+vector< vector<Node*> > bfs(Node* nodes, int size) {
 	vector< vector<Node*> > path;
 
-	Node* currentNode = nodes[0];
+	Node* currentNode = &nodes[0];
 	vector<Node*> firstPath;
 	firstPath.push_back(currentNode);
 	path.push_back(firstPath);
