@@ -282,7 +282,7 @@ int Node::getExplored() {
 	return explored;
 }
 
-Node::setExplored(int newExplored) {
+void Node::setExplored(int newExplored) {
 	explored = newExplored;
 	return;
 }
