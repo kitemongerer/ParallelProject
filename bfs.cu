@@ -85,23 +85,23 @@ __global__ void allPrefixSums(int *d_array, int *d_size, int *d_base) {
 Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	srand((unsigned)time(0)); 
 	Node* nodes = new Node[nNodes];
-	/*for (int i = 0; i < nNodes; i++) {
+	for (int i = 0; i < nNodes; i++) {
 		Node* tmp = new Node(i);
 		nodes[i] = *tmp;
 	}
 
-	for (int i = 0; i < nNodes; i++) {
+	/*for (int i = 0; i < nNodes; i++) {
 		int numEdges = rand() % maxEdgesPerNode;
 		for (int j = 0; j < numEdges; j++) {
 			//TODO don't repear Children #########################################################################################################
 			int child = rand() % nNodes;
 			nodes[i].addChild(nodes[child]);
 		}
-	}
+	}*/
 	
 	for (int i = 0; i < nNodes; i++) {
 		nodes[i].printNode();
-	}*/
+	}
 
 	return nodes; 
 }
