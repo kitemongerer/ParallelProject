@@ -5,7 +5,8 @@
 // CUDA runtime
 #include <cuda_runtime.h>
 
-#include <vector>
+use namespace std;
+//#include <vector>
 
 // Thread block size
 #define TBS 512
