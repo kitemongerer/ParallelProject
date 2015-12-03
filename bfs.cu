@@ -94,7 +94,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	Node* nodes = new Node[nNodes];
 	for (int i = 0; i < nNodes; i++) {
 		Node* tmp = new Node(i);
-		nodes[i] = tmp;
+		nodes[i] = *tmp;
 	}
 
 	for (int i = 0; i < nNodes; i++) {
