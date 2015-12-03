@@ -231,7 +231,7 @@ void Node::addChild(Node child) {
 void Node::printNode() {
 	printf("Value: %i Children: [", value);
 	for (int i = 0; i < numChildren; i++) {
-		printf("child: %i is %i, ", i, children[i].getValue());
+		printf("%i, ", children[i].getValue());
 	}
 	printf("]\n");
 	return;
