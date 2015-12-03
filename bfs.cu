@@ -125,17 +125,17 @@ Node** generateGraph(int nNodes, int maxEdgesPerNode) {
 void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
 	printf("Explore Child%i\n", child->getValue());
 	child->setExplored(1);
-	vector<Node*> currentPath;
+	vector<Node*> newPath;
 	if (path->size() <= depth) {
-		path->push_back(currentPath);
+		path->push_back(newPath);
 	}
-	currentPath = path->at(depth);
+	vector<Node*>* currentPath = &(path->at(depth));
 	//printf("%i numChildren: %i\n", child->getValue(), child->getNumChildren());
 	//child->printNode();
 	for (int i = 0; i < child->getNumChildren(); i++) {
 		Node* newChild = child->getChildren()[i];
 		if (newChild->getExplored() == 0) {
-			currentPath.push_back(newChild);
+			currentPath->push_back(newChild);
 			exploreChild(newChild, path, depth + 1);	
 		}
 	}
