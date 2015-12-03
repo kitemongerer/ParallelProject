@@ -130,10 +130,9 @@ void exploreChild(Node* child, vector< vector<Node*> > path, int depth) {
 		path.push_back(currentPath);
 	}
 	currentPath = path[depth];
-	printf("%i numChildren: %i\n", child->getValue(), child->getNumChildren());
+	//printf("%i numChildren: %i\n", child->getValue(), child->getNumChildren());
 	child->printNode();
 	for (int i = 0; i < child->getNumChildren(); i++) {
-		printf("WEEEE%i\n", child->getValue());
 		Node* newChild = child->getChildren()[i];
 		if (newChild->getExplored() == 0) {
 			currentPath.push_back(newChild);
@@ -165,7 +164,14 @@ int main (int argc, char **argv) {
 	int maxEdgesPerNode = atoi(argv[2]);
 
 	Node** nodes = generateGraph(size, maxEdgesPerNode);
-	bfs(nodes, size);
+	vector< vector<Node*> > path = bfs(nodes, size);
+
+	for (int i = 0; i < path.size(); i++) {
+		for (int j = 0; j < path[i].size(); j++) {
+			printf("%i - %i ", path[i][j]->getValue());
+		}
+		printf("\n");
+	}
 
 	
 	/*int *d_array, *d_base, *d_size;
