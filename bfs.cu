@@ -5,6 +5,8 @@
 // CUDA runtime
 #include <cuda_runtime.h>
 
+#include <vector>
+
 // Thread block size
 #define TBS 512
 
@@ -16,6 +18,7 @@ private:
 	int value;
 	Node* children;
 	int numChildren;
+	int explored;
 
 public:
 	Node();
@@ -115,14 +118,44 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	return nodes; 
 }
 
+vector<vector<Node>> bfs(Node* nodes, size) {
+	vector<vector<node> path;
+
+	Node currentNode = nodes[0];
+	vector<Node> firstPath;
+	firstPath.push_back(currentNode);
+	path.push_back(firstPath);
+
+	while() {
+		vector<Node> currentPath;
+		for (int i = 0; i < currentNode.getNumChildren(); i++) {
+			currentPath.push_back(currentNode.getChildren()[i]);
+			exploreChild(currentNode.getChildren()[i], path, 1);
+		}
+	}
+}
+
+void exploreChild(Node child, vector<vector<node> path, int depth) {
+	vector<Node> currentPath;
+	if (path.size() <= depth) {
+		path.push_back(currentPath);
+	}
+	currentPath = path[depth];
+	for (int i = 0; i < child.getNumChildren(); i++) {
+		currentPath.push_back(child.getChildren()[i]);
+		exploreChild(child.getChildren()[i], path, depth + 1);
+	}
+}
+
 int main (int argc, char **argv) {
 
 	// Get command line argument
 	int size = atoi(argv[1]);
 	int maxEdgesPerNode = atoi(argv[2]);
 
-	generateGraph(size, maxEdgesPerNode);
+	Node* nodes = generateGraph(size, maxEdgesPerNode);
 
+	
 	/*int *d_array, *d_base, *d_size;
 
 	// Allocate space for device copies
@@ -199,6 +232,7 @@ int main (int argc, char **argv) {
 
 Node::Node(int newValue) {
 	value = newValue;
+	explored = 0;
 }
 
 Node::Node() {
@@ -226,7 +260,10 @@ void Node::addChild(Node child) {
 void Node::printNode() {
 	printf("Value: %i Children: [", value);
 	for (int i = 0; i < numChildren; i++) {
-		printf("%i, ", children[i].getValue());
+		printf("%i", children[i].getValue());
+		if (i != numChildren - 1) {
+			printf(", ");
+		}
 	}
 	printf("]\n");
 	return;
@@ -234,6 +271,10 @@ void Node::printNode() {
 
 void Node::initializeChildren(int numEdges) {
 	children = new Node[numEdges];
+}
+
+int Node::getExplored() {
+	return explored;
 }
 
 
