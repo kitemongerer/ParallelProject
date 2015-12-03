@@ -30,6 +30,7 @@ public:
 	int getNumChildren();
 	void printNode();
 	void initializeChildren(int);
+	int getExplored();
 };
 
 /*__global__ void addBase(int *d_array, int *d_size, int *d_base) {
@@ -119,8 +120,20 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	return nodes; 
 }
 
+void exploreChild(Node child, vector<vector<node> path, int depth) {
+	vector<Node> currentPath;
+	if (path.size() <= depth) {
+		path.push_back(currentPath);
+	}
+	currentPath = path[depth];
+	for (int i = 0; i < child.getNumChildren(); i++) {
+		currentPath.push_back(child.getChildren()[i]);
+		exploreChild(child.getChildren()[i], path, depth + 1);
+	}
+}
+
 vector<vector<Node>> bfs(Node* nodes, int size) {
-	vector<vector<node> path;
+	vector<vector<Node> path;
 
 	Node currentNode = nodes[0];
 	vector<Node> firstPath;
@@ -133,18 +146,6 @@ vector<vector<Node>> bfs(Node* nodes, int size) {
 			currentPath.push_back(currentNode.getChildren()[i]);
 			exploreChild(currentNode.getChildren()[i], path, 1);
 		}
-	}
-}
-
-void exploreChild(Node child, vector<vector<node> path, int depth) {
-	vector<Node> currentPath;
-	if (path.size() <= depth) {
-		path.push_back(currentPath);
-	}
-	currentPath = path[depth];
-	for (int i = 0; i < child.getNumChildren(); i++) {
-		currentPath.push_back(child.getChildren()[i]);
-		exploreChild(child.getChildren()[i], path, depth + 1);
 	}
 }
 
