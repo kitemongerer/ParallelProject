@@ -140,13 +140,8 @@ vector< vector<Node> > bfs(Node* nodes, int size) {
 	firstPath.push_back(currentNode);
 	path.push_back(firstPath);
 
-	while() {
-		vector<Node> currentPath;
-		for (int i = 0; i < currentNode.getNumChildren(); i++) {
-			currentPath.push_back(currentNode.getChildren()[i]);
-			exploreChild(currentNode.getChildren()[i], path, 1);
-		}
-	}
+	vector<Node> currentPath;
+	exploreChild(currentNode, path, 1);
 
 	return path;
 }
