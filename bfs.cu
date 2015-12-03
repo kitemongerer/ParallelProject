@@ -99,7 +99,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	}
 
 	for (int i = 0; i < nNodes; i++) {
-		int numEdges = rand() % (maxEdgesPerNode + 1);
+		int numEdges = (rand() % maxEdgesPerNode) + 1;
 		nodes[i].initializeChildren(numEdges);
 		for (int j = 0; j < numEdges; j++) {
 			int child = rand() % nNodes;
