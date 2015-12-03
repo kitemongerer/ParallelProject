@@ -5,7 +5,7 @@
 // CUDA runtime
 #include <cuda_runtime.h>
 
-#include "node.h"
+#include "Node.h"
 
 // Thread block size
 #define TBS 512
