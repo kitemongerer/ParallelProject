@@ -25,7 +25,7 @@ public:
 	Node();
 	Node(int);
 	int getValue();
-	void addChild(Node);
+	void addChild(Node*);
 	Node** getChildren();
 	int getNumChildren();
 	void printNode();
@@ -272,7 +272,7 @@ void Node::addChild(Node* child) {
 void Node::printNode() {
 	printf("Value: %i Children: [", value);
 	for (int i = 0; i < numChildren; i++) {
-		printf("%i", children[i].getValue());
+		printf("%i", children[i]->getValue());
 		if (i != numChildren - 1) {
 			printf(", ");
 		}
