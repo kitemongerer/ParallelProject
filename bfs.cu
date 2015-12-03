@@ -106,11 +106,12 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 			for (int k = 0; k < nodes[i].getNumChildren(); k++){
 				if (child == nodes[i].getChildren()[k].getValue()){
 					isChild = true;
+					break;
 				}
 			}
-			if (!isChild && child != nodes[i].getValue()){
+			/*if (!isChild && child != nodes[i].getValue()){
 				nodes[i].addChild(nodes[child]);
-			}
+			}*/
 		}
 	}
 	
