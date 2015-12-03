@@ -11,4 +11,4 @@ public:
 	Node* getChildren();
 	int getNumChildren();
 	void printNode();
-}
+};
