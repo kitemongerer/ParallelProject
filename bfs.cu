@@ -97,12 +97,12 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 		for (int j = 0; j < numEdges; j++) {
 			int child = rand() % nNodes;
 			bool isChild = false;
-			for(int k = 0; k < nodes[i].getNumChildren(); k++){
-				if(child == nodes[i].getChildren()[k].getValue()){
+			for (int k = 0; k < nodes[i].getNumChildren(); k++){
+				if (child == nodes[i].getChildren()[k].getValue()){
 					isChild = true;
 				}
 			}
-			if(!isChild){
+			if (!isChild && child != nodes[i].getValue()){
 				nodes[i].addChild(nodes[child]);
 			}
 		}
