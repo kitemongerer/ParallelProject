@@ -89,7 +89,7 @@ __global__ void allPrefixSums(int *d_array, int *d_size, int *d_base) {
 	}
 }*/
 
-Node* generateGraph(int nNodes, int maxEdgesPerNode) {
+Node** generateGraph(int nNodes, int maxEdgesPerNode) {
 	srand((unsigned)time(0)); 
 	Node** nodes = new Node*[nNodes];
 	for (int i = 0; i < nNodes; i++) {
@@ -122,33 +122,33 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	return nodes; 
 }
 
-void exploreChild(Node child, vector< vector<Node> > path, int depth) {
+void exploreChild(Node* child, vector< vector<Node> > path, int depth) {
 	printf("Explore Child%i\n", child.getValue());
-	child.setExplored(1);
+	child->setExplored(1);
 	vector<Node> currentPath;
 	if (path.size() <= depth) {
 		path.push_back(currentPath);
 	}
 	currentPath = path[depth];
 	printf("%i numChildren: %i\n", child.getValue(), child.getNumChildren());
-	child.printNode();
-	for (int i = 0; i < child.getNumChildren(); i++) {
-		printf("WEEEE%i\n", child.getValue());
-		Node newChild = child.getChildren()[i];
-		if (newChild.getExplored() == 0) {
+	child->printNode();
+	for (int i = 0; i < child->getNumChildren(); i++) {
+		printf("WEEEE%i\n", child->getValue());
+		Node* newChild = child->getChildren()[i];
+		if (newChild->getExplored() == 0) {
 			currentPath.push_back(newChild);
 			exploreChild(newChild, path, depth + 1);	
 		}
 	}
 
-	child.setExplored(2);
+	child->setExplored(2);
 	return;
 }
 
 vector< vector<Node> > bfs(Node* nodes, int size) {
 	vector< vector<Node> > path;
 
-	Node currentNode = nodes[0];
+	Node* currentNode = nodes[0];
 	vector<Node> firstPath;
 	firstPath.push_back(currentNode);
 	path.push_back(firstPath);
