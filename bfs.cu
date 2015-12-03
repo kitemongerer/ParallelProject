@@ -137,6 +137,13 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
 			Node* newChild = child->getChildren()[i];
 			if (newChild->getExplored() == 0) {
 				currentPath->push_back(newChild);
+			}
+		}
+
+		// Explore loop after push loop so it is actually BFS
+		for (int i = 0; i < child->getNumChildren(); i++) {
+			Node* newChild = child->getChildren()[i];
+			if (newChild->getExplored() == 0) {
 				exploreChild(newChild, path, depth + 1);	
 			}
 		}
