@@ -109,7 +109,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 int main (int argc, char **argv) {
 
 	// Get command line argument
-	int size = atoi(argv[1]);
+	/*int size = atoi(argv[1]);
 
 	// Create the array
 	int* array = new int[size];
@@ -121,7 +121,10 @@ int main (int argc, char **argv) {
 	//Generate random numbers
 	for(int i = 0; i < size; i++){ 
 		array[i] = (rand() % 1000) + 1;
-	}
+	}*/
+
+	srand((unsigned)time(0));
+	generateGraph(rand() % 10, rand() % 3);
 
 	/*int *d_array, *d_base, *d_size;
 
