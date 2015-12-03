@@ -4,6 +4,9 @@ Node::Node(int value) {
 	this.value = value;
 }
 
+Node::Node() {
+}
+
 int Node::getValue() {
 	return this.value;
 }
