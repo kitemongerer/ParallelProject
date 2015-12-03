@@ -168,7 +168,7 @@ int main (int argc, char **argv) {
 
 	for (int i = 0; i < path.size(); i++) {
 		for (int j = 0; j < path[i].size(); j++) {
-			printf("%i - %i ", path[i][j]->getValue());
+			printf("%i - %i ", i, path[i][j]->getValue());
 		}
 		printf("\n");
 	}
