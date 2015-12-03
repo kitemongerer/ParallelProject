@@ -140,6 +140,7 @@ void exploreChild(Node child, vector< vector<Node> > path, int depth) {
 }
 
 vector< vector<Node> > bfs(Node* nodes, int size) {
+	printf("BFS\n");
 	vector< vector<Node> > path;
 
 	Node currentNode = nodes[0];
