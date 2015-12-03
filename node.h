@@ -5,7 +5,7 @@ private:
 	int numChildren;
 
 public:
-	void Node(int);
+	Node(int);
 	int getValue();
 	void addChild(Node);
 	Node* getChildren();

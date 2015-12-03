@@ -13,7 +13,7 @@
 // Warp size
 #define WS 32
 
-__global__ void addBase(int *d_array, int *d_size, int *d_base) {
+/*__global__ void addBase(int *d_array, int *d_size, int *d_base) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 	if (idx < *d_size && idx >= TBS) {
 		d_array[idx] = d_array[idx] + d_base[blockIdx.x];
@@ -66,7 +66,7 @@ __global__ void allPrefixSums(int *d_array, int *d_size, int *d_base) {
 
 		d_array[idx] = val;
 	}
-}
+}*/
 
 Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	srand((unsigned)time(0)); 
