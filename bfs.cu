@@ -25,6 +25,7 @@ public:
 	Node* getChildren();
 	int getNumChildren();
 	void printNode();
+	void initializeChildren(int);
 };
 
 /*__global__ void addBase(int *d_array, int *d_size, int *d_base) {
@@ -90,14 +91,15 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 		nodes[i] = *tmp;
 	}
 
-	/*for (int i = 0; i < nNodes; i++) {
+	for (int i = 0; i < nNodes; i++) {
 		int numEdges = rand() % maxEdgesPerNode;
+		nodes[i].initializeChildren(numEdges);
 		for (int j = 0; j < numEdges; j++) {
 			//TODO don't repear Children #########################################################################################################
 			int child = rand() % nNodes;
 			nodes[i].addChild(nodes[child]);
 		}
-	}*/
+	}
 	
 	for (int i = 0; i < nNodes; i++) {
 		nodes[i].printNode();
@@ -233,6 +235,10 @@ void Node::printNode() {
 	}
 	printf("]\n");
 	return;
+}
+
+void Node::initializeChildren(int numEdges) {
+	children = new Node[numEdges];
 }
 
 
