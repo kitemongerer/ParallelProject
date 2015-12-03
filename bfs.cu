@@ -5,13 +5,27 @@
 // CUDA runtime
 #include <cuda_runtime.h>
 
-#include "Node.h"
-
 // Thread block size
 #define TBS 512
 
 // Warp size
 #define WS 32
+
+class Node {
+private:
+	int value;
+	Node* children;
+	int numChildren;
+
+public:
+	Node();
+	Node(int);
+	int getValue();
+	void addChild(Node);
+	Node* getChildren();
+	int getNumChildren();
+	void printNode();
+};
 
 /*__global__ void addBase(int *d_array, int *d_size, int *d_base) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
@@ -182,5 +196,42 @@ int main (int argc, char **argv) {
 
 	return 0;
 }
+
+Node::Node(int newValue) {
+	value = newValue;
+}
+
+Node::Node() {
+}
+
+int Node::getValue() {
+	return value;
+}
+
+Node* Node::getChildren() {
+	return children;
+}
+
+int Node::getNumChildren() {
+	return numChildren;
+}
+
+void Node::addChild(Node child) {
+	children[numChildren] = child;
+	numChildren++;
+
+	return;
+}
+
+void Node::printNode() {
+	printf("Value: %i Children: [", value);
+	for (int i = 0; i < numChildren; i++) {
+		printf("child: %i is %i, ", i, children[i].getValue());
+	}
+	printf("]\n");
+	return;
+}
+
+
 
 
