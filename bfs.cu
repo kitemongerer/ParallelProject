@@ -131,7 +131,7 @@ void exploreChild(Node child, vector< vector<Node> > path, int depth) {
 	}
 	currentPath = path[depth];
 	for (int i = 0; i < child.getNumChildren(); i++) {
-		if (child.getExplored() == 0) {
+		if (child.getChildren()[i].getExplored() == 0) {
 			currentPath.push_back(child.getChildren()[i]);
 			exploreChild(child.getChildren()[i], path, depth + 1);	
 		}
@@ -149,7 +149,6 @@ vector< vector<Node> > bfs(Node* nodes, int size) {
 	firstPath.push_back(currentNode);
 	path.push_back(firstPath);
 
-	vector<Node> currentPath;
 	exploreChild(currentNode, path, 1);
 
 	return path;
