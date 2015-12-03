@@ -17,7 +17,7 @@ using namespace std;
 class Node {
 private:
 	int value;
-	Node* children;
+	Node** children;
 	int numChildren;
 	int explored;
 
@@ -26,7 +26,7 @@ public:
 	Node(int);
 	int getValue();
 	void addChild(Node);
-	Node* getChildren();
+	Node** getChildren();
 	int getNumChildren();
 	void printNode();
 	void initializeChildren(int);
@@ -104,7 +104,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 			int child = rand() % nNodes;
 			bool isChild = false;
 			for (int k = 0; k < nodes[i].getNumChildren(); k++){
-				if (child == nodes[i].getChildren()[k].getValue()){
+				if (child == &(nodes[i].getChildren()[k]).getValue()){
 					isChild = true;
 					break;
 				}
@@ -254,7 +254,7 @@ int Node::getValue() {
 	return value;
 }
 
-Node* Node::getChildren() {
+Node** Node::getChildren() {
 	return children;
 }
 
@@ -282,7 +282,7 @@ void Node::printNode() {
 }
 
 void Node::initializeChildren(int numEdges) {
-	children = new Node[numEdges];
+	children = new Node*[numEdges];
 }
 
 int Node::getExplored() {
