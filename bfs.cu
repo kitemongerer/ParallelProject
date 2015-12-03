@@ -122,16 +122,16 @@ Node** generateGraph(int nNodes, int maxEdgesPerNode) {
 	return nodes; 
 }
 
-void exploreChild(Node* child, vector< vector<Node*> > path, int depth) {
+void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
 	printf("Explore Child%i\n", child->getValue());
 	child->setExplored(1);
 	vector<Node*> currentPath;
 	if (path.size() <= depth) {
 		path.push_back(currentPath);
 	}
-	currentPath = path[depth];
+	currentPath = path*[depth];
 	//printf("%i numChildren: %i\n", child->getValue(), child->getNumChildren());
-	child->printNode();
+	//child->printNode();
 	for (int i = 0; i < child->getNumChildren(); i++) {
 		Node* newChild = child->getChildren()[i];
 		if (newChild->getExplored() == 0) {
@@ -152,7 +152,7 @@ vector< vector<Node*> > bfs(Node** nodes, int size) {
 	firstPath.push_back(currentNode);
 	path.push_back(firstPath);
 
-	exploreChild(currentNode, path, 1);
+	exploreChild(currentNode, &path, 1);
 
 	return path;
 }
