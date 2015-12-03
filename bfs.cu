@@ -99,7 +99,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 
 	for (int i = 0; i < nNodes; i++) {
 		int numEdges = rand() % (maxEdgesPerNode + 1);
-		nodes[i].initializeChildren(numEdges);
+		nodes[i]->initializeChildren(numEdges);
 		for (int j = 0; j < numEdges; j++) {
 			int child = rand() % nNodes;
 			bool isChild = false;
@@ -110,7 +110,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 				}
 			}
 			if (!isChild && child != nodes[i]->getValue()){
-				nodes[i]->addChild(&nodes[child]);
+				nodes[i]->addChild(nodes[child]);
 			}
 		}
 	}
