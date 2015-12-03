@@ -126,7 +126,7 @@ int main (int argc, char **argv) {
 	}*/
 
 	srand((unsigned)time(0));
-	generateGraph(rand() % 10, rand() % 3);
+	generateGraph(10, 3);
 
 	/*int *d_array, *d_base, *d_size;
 
