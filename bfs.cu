@@ -5,7 +5,7 @@
 // CUDA runtime
 #include <cuda_runtime.h>
 
-use namespace std;
+using namespace std;
 //#include <vector>
 
 // Thread block size
