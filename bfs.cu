@@ -20,6 +20,7 @@ private:
 	Node** children;
 	int numChildren;
 	int explored;
+	Lock* lock;
 
 public:
 	Node();
