@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <assert.h>
 #include <math.h>
+#include <vector>
 
 // CUDA runtime
 #include <cuda_runtime.h>
 
 using namespace std;
-//#include <vector>
 
 // Thread block size
 #define TBS 512
@@ -119,7 +119,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	return nodes; 
 }
 
-vector<vector<Node>> bfs(Node* nodes, size) {
+	vector<vector<Node>> bfs(Node* nodes, size) {
 	vector<vector<node> path;
 
 	Node currentNode = nodes[0];
