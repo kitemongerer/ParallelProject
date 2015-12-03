@@ -92,12 +92,19 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	}
 
 	for (int i = 0; i < nNodes; i++) {
-		int numEdges = rand() % maxEdgesPerNode;
+		int numEdges = rand() % (maxEdgesPerNode + 1);
 		nodes[i].initializeChildren(numEdges);
 		for (int j = 0; j < numEdges; j++) {
-			//TODO don't repear Children #########################################################################################################
 			int child = rand() % nNodes;
-			nodes[i].addChild(nodes[child]);
+			bool isChild = false;
+			for(int k = 0; k < nodes[i].numChildren; k++){
+				if(child == nodes[i].getChildren()[k].getValue()){
+					isChild = true;
+				}
+			}
+			if(!isChild){
+				nodes[i].addChild(nodes[child]);
+			}
 		}
 	}
 	
@@ -111,22 +118,10 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 int main (int argc, char **argv) {
 
 	// Get command line argument
-	/*int size = atoi(argv[1]);
+	int size = atoi(argv[1]);
+	int maxEdgesPerNode = atoi(argv[2]);
 
-	// Create the array
-	int* array = new int[size];
-	int* result = new int[size];
-
- 	// Initialize random
-	srand((unsigned)time(0)); 
-	 
-	//Generate random numbers
-	for(int i = 0; i < size; i++){ 
-		array[i] = (rand() % 1000) + 1;
-	}*/
-
-	srand((unsigned)time(0));
-	generateGraph(10, 3);
+	generateGraph(size, maxEdgesPerNode);
 
 	/*int *d_array, *d_base, *d_size;
 
