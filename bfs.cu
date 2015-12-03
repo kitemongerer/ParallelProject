@@ -120,7 +120,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	return nodes; 
 }
 
-void exploreChild(Node child, vector<vector<Node> path, int depth) {
+void exploreChild(Node child, vector<vector<Node>> path, int depth) {
 	vector<Node> currentPath;
 	if (path.size() <= depth) {
 		path.push_back(currentPath);
@@ -148,7 +148,7 @@ vector<vector<Node>> bfs(Node* nodes, int size) {
 		}
 	}
 
-	return;
+	return path;
 }
 
 int main (int argc, char **argv) {
