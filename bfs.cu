@@ -32,6 +32,7 @@ public:
 	void initializeChildren(int);
 	int getExplored();
 	void setExplored(int);
+	int parallelSetExplored(int);
 };
 
 /*__global__ void addBase(int *d_array, int *d_size, int *d_base) {
@@ -305,7 +306,7 @@ int Node::getExplored() {
 	return explored;
 }
 
-int Node::parallelSetExploret(int newExplored) {
+int Node::parallelSetExplored(int newExplored) {
 	return atomicExch(&explored, newExplored);
 }
 
