@@ -1,4 +1,5 @@
 #include "Node.h"
+#include <stdio.h>
 
 Node::Node(int newValue) {
 	value = newValue;
