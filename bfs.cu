@@ -126,8 +126,8 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
 	printf("Explore Child%i\n", child->getValue());
 	child->setExplored(1);
 	vector<Node*> currentPath;
-	if (path.size() <= depth) {
-		path.push_back(currentPath);
+	if (path->size() <= depth) {
+		path->push_back(currentPath);
 	}
 	currentPath = path->[depth];
 	//printf("%i numChildren: %i\n", child->getValue(), child->getNumChildren());
