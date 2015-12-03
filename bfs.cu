@@ -124,7 +124,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 }
 
 void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
-	printf("Explore Child%i Depth: %i\n", child->getValue(), depth);
+	//printf("Explore Child%i Depth: %i\n", child->getValue(), depth);
 	child->setExplored(1);
 	if (child->getNumChildren() > 0) {
 		vector<Node*> newPath;
