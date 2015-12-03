@@ -96,7 +96,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 		Node* tmp = new Node(i);
 		nodes[i] = *tmp;
 	}
-printf("HERE\n");
+
 	for (int i = 0; i < nNodes; i++) {
 		int numEdges = rand() % (maxEdgesPerNode + 1);
 		nodes[i].initializeChildren(numEdges);
@@ -162,7 +162,7 @@ int main (int argc, char **argv) {
 	int maxEdgesPerNode = atoi(argv[2]);
 
 	Node* nodes = generateGraph(size, maxEdgesPerNode);
-	//bfs(nodes, size);
+	bfs(nodes, size);
 
 	
 	/*int *d_array, *d_base, *d_size;
