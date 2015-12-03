@@ -305,9 +305,12 @@ int Node::getExplored() {
 	return explored;
 }
 
+int Node::parallelSetExploret(int newExplored) {
+	return atomicExch(&explored, newExplored);
+}
+
 void Node::setExplored(int newExplored) {
-	atomicExch(&explored, newExplored);
-	//explored = newExplored;
+	explored = newExplored;
 	return;
 }
 
