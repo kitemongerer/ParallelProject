@@ -91,10 +91,10 @@ __global__ void allPrefixSums(int *d_array, int *d_size, int *d_base) {
 
 Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	srand((unsigned)time(0)); 
-	Node* nodes = new Node[nNodes];
+	Node** nodes = new Node[nNodes];
 	for (int i = 0; i < nNodes; i++) {
-		Node* tmp = new Node(i);
-		nodes[i] = *tmp;
+		Node tmp = new Node(i);
+		nodes[i] = &tmp;
 	}
 
 	for (int i = 0; i < nNodes; i++) {
