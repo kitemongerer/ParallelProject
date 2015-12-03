@@ -119,7 +119,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	return nodes; 
 }
 
-	vector<vector<Node>> bfs(Node* nodes, size) {
+vector<vector<Node>> bfs(Node* nodes, int size) {
 	vector<vector<node> path;
 
 	Node currentNode = nodes[0];
@@ -155,6 +155,7 @@ int main (int argc, char **argv) {
 	int maxEdgesPerNode = atoi(argv[2]);
 
 	Node* nodes = generateGraph(size, maxEdgesPerNode);
+	bfs(nodes, size);
 
 	
 	/*int *d_array, *d_base, *d_size;
