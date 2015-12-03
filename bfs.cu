@@ -20,7 +20,6 @@ private:
 	Node** children;
 	int numChildren;
 	int explored;
-	Lock* lock;
 
 public:
 	Node();
@@ -307,7 +306,8 @@ int Node::getExplored() {
 }
 
 void Node::setExplored(int newExplored) {
-	explored = newExplored;
+	atomicExch(&explored, newExplored);
+	//explored = newExplored;
 	return;
 }
 
