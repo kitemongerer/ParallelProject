@@ -2,21 +2,22 @@
 
 Node::Node(int value) {
 	this.value = value;
+	return this;
 }
 
 Node::Node() {
 }
 
 int Node::getValue() {
-	return this.value;
+	return value;
 }
 
 Node* Node::getChildren() {
-	return this.children;
+	return children;
 }
 
 int Node::getNumChildren() {
-	return this.numChildren;
+	return numChildren;
 }
 
 void Node::addChild(Node child) {
