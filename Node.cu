@@ -1,8 +1,7 @@
 #include "Node.h"
 
-Node::Node(int value) {
-	this.value = value;
-	return this;
+Node::Node(int newValue) {
+	value = newValue;
 }
 
 Node::Node() {
