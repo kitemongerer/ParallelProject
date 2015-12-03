@@ -164,7 +164,7 @@ int main (int argc, char **argv) {
 	int size = atoi(argv[1]);
 	int maxEdgesPerNode = atoi(argv[2]);
 
-	Node* nodes = generateGraph(size, maxEdgesPerNode);
+	Node** nodes = generateGraph(size, maxEdgesPerNode);
 	bfs(nodes, size);
 
 	
