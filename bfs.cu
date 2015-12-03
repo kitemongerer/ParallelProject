@@ -31,6 +31,7 @@ public:
 	void printNode();
 	void initializeChildren(int);
 	int getExplored();
+	void setExplored(int);
 };
 
 /*__global__ void addBase(int *d_array, int *d_size, int *d_base) {
@@ -130,6 +131,10 @@ void exploreChild(Node child, vector< vector<Node> > path, int depth) {
 		currentPath.push_back(child.getChildren()[i]);
 		exploreChild(child.getChildren()[i], path, depth + 1);
 	}
+
+
+
+	return;
 }
 
 vector< vector<Node> > bfs(Node* nodes, int size) {
@@ -277,6 +282,10 @@ int Node::getExplored() {
 	return explored;
 }
 
+Node::setExplored(int newExplored) {
+	explored = newExplored;
+	return;
+}
 
 
 
