@@ -306,7 +306,7 @@ int Node::getExplored() {
 	return explored;
 }
 
-int Node::parallelSetExplored(int newExplored) {
+__device__ int Node::parallelSetExplored(int newExplored) {
 	return atomicExch(&explored, newExplored);
 }
 
