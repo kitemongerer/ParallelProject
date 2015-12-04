@@ -188,7 +188,7 @@ int main (int argc, char **argv) {
 	int maxEdgesPerNode = atoi(argv[2]);
 
 	Node* nodes = generateGraph(size, maxEdgesPerNode);
-
+printf("HERE1\n");
 	Node* d_graph;
 	int* d_size;
 
