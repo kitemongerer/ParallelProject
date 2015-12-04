@@ -182,13 +182,14 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
 }
 
 int main (int argc, char **argv) {
+	if (argc !=3) abort(); 
 
 	// Get command line argument
 	int size = atoi(argv[1]);
 	int maxEdgesPerNode = atoi(argv[2]);
 
 	Node* nodes = generateGraph(size, maxEdgesPerNode);
-printf("HERE1\n");
+
 	Node* d_graph;
 	int* d_size;
 
@@ -202,7 +203,7 @@ printf("HERE1\n");
 
 	//Synchronouse bfs
 	vector< vector<Node*> > path = bfs(nodes, size);
-printf("HERE\n");
+
 	callDeviceCachedVisitBFS(d_graph, d_size, size, path);
 
 	// Cleanup
