@@ -182,7 +182,10 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
 }
 
 int main (int argc, char **argv) {
-	if (argc !=3) abort(); 
+	if (argc !=3) {
+		printf("Too few arguments!\n");
+		abort();
+	}
 
 	// Get command line argument
 	int size = atoi(argv[1]);
