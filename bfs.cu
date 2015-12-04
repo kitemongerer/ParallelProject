@@ -37,7 +37,7 @@ public:
 
 
 //Multiplies each element of sparse matrix by the correct vector element and puts the result back in the matrix
-__global__ void cachedVisitBFS(int *d_graph, int *d_size) {
+__global__ void cachedVisitBFS(Node *d_graph, int *d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 	if (idx < *d_size) {
 		vector<Node*> newPath;
@@ -199,7 +199,7 @@ int main (int argc, char **argv) {
 	}
 
 	// Cleanup
-	cudaFree(d_array); 
+	cudaFree(d_graph); 
 	cudaFree(d_size); 
 
 	return 0;
