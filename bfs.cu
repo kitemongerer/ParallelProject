@@ -40,7 +40,7 @@ public:
 __global__ void cachedVisitBFS(Node *d_graph, int *d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 	if (idx < *d_size) {
-		vector<Node*> newPath;
+		
 	}
 }
 
@@ -121,28 +121,7 @@ vector< vector<Node*> > bfs(Node* nodes, int size) {
 	return path;
 }
 
-int main (int argc, char **argv) {
-
-	// Get command line argument
-	int size = atoi(argv[1]);
-	int maxEdgesPerNode = atoi(argv[2]);
-
-	Node* nodes = generateGraph(size, maxEdgesPerNode);
-
-	Node* d_graph;
-	int* d_size;
-
-	// Allocate space for device copies
-	cudaMalloc((void **)&d_graph, size * sizeof(Node));
-	cudaMalloc((void **)&d_size, sizeof(int));
-
-	// Copy inputs to device
-	cudaMemcpy(d_graph, nodes, size * sizeof(Node), cudaMemcpyHostToDevice);
-	cudaMemcpy(d_size, &size, sizeof(int), cudaMemcpyHostToDevice);
-
-	//Synchronouse bfs
-	vector< vector<Node*> > path = bfs(nodes, size);
-
+void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, vector< vector<Node*> > path) {
 	cudaEvent_t start;
 	cudaEventCreate(&start);
     cudaEvent_t stop;
@@ -172,6 +151,8 @@ int main (int argc, char **argv) {
 	cudaMemcpy(gpu_result, d_graph, size * sizeof(int), cudaMemcpyDeviceToHost);
 
 	bool isCorrect = true;
+
+
 	for (int i = 0; i < path.size(); i++) {
 		printf("%i - ", i);
 		for (int j = 0; j < path[i].size(); j++) {
@@ -179,6 +160,13 @@ int main (int argc, char **argv) {
 		}
 		printf("\n");
 	}
+
+	if (!isCorrect) {
+		printf("The results do not match\n");
+	} else {
+		printf("The results match\n");
+	}
+
 	/*for (int i = 0; i < size; i++) {
 		//printf("%i GPU: %i CPU: %i arr: %i\n", i, gpu_result[i], result[i], array[i]);
 		//Print the result if it is wrong
@@ -191,12 +179,31 @@ int main (int argc, char **argv) {
 			//printf("%i GPU: %i CPU: %i\n", i, gpu_result[i], result[i]);
 		} 
 	}*/
+}
 
-	if (!isCorrect) {
-		printf("The results do not match\n");
-	} else {
-		printf("The results match\n");
-	}
+int main (int argc, char **argv) {
+
+	// Get command line argument
+	int size = atoi(argv[1]);
+	int maxEdgesPerNode = atoi(argv[2]);
+
+	Node* nodes = generateGraph(size, maxEdgesPerNode);
+
+	Node* d_graph;
+	int* d_size;
+
+	// Allocate space for device copies
+	cudaMalloc((void **)&d_graph, size * sizeof(Node));
+	cudaMalloc((void **)&d_size, sizeof(int));
+
+	// Copy inputs to device
+	cudaMemcpy(d_graph, nodes, size * sizeof(Node), cudaMemcpyHostToDevice);
+	cudaMemcpy(d_size, &size, sizeof(int), cudaMemcpyHostToDevice);
+
+	//Synchronouse bfs
+	vector< vector<Node*> > path = bfs(nodes, size);
+
+	callDeviceCachedVisitBFS(path, d_graph, d_size);
 
 	// Cleanup
 	cudaFree(d_graph); 
