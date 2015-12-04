@@ -133,7 +133,7 @@ int main (int argc, char **argv) {
 	int* d_size;
 
 	// Allocate space for device copies
-	cudaMalloc((void **)&d_array, size * sizeof(Node));
+	cudaMalloc((void **)&d_graph, size * sizeof(Node));
 	cudaMalloc((void **)&d_size, sizeof(int));
 
 	// Copy inputs to device
@@ -154,7 +154,7 @@ int main (int argc, char **argv) {
     cudaEventRecord(start, NULL);
 
 	// Launch sparseMatrixMul() kernel on GPU
-	cachedVisitBFS<<<gridSz, TBS>>>(d_array, d_size, d_base);
+	cachedVisitBFS<<<gridSz, TBS>>>(d_graph, d_size);
 	
 	// Make sure result is finished
 	cudaDeviceSynchronize();
