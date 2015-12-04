@@ -202,7 +202,7 @@ int main (int argc, char **argv) {
 
 	//Synchronouse bfs
 	vector< vector<Node*> > path = bfs(nodes, size);
-
+printf("HERE\n");
 	callDeviceCachedVisitBFS(d_graph, d_size, size, path);
 
 	// Cleanup
