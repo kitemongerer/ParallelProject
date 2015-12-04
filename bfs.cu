@@ -121,7 +121,7 @@ vector< vector<Node*> > bfs(Node* nodes, int size) {
 	return path;
 }
 
-void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, vector< vector<Node*> > path) {
+void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vector<Node*> > path) {
 	cudaEvent_t start;
 	cudaEventCreate(&start);
     cudaEvent_t stop;
@@ -203,7 +203,7 @@ int main (int argc, char **argv) {
 	//Synchronouse bfs
 	vector< vector<Node*> > path = bfs(nodes, size);
 
-	callDeviceCachedVisitBFS(path, d_graph, d_size);
+	callDeviceCachedVisitBFS(d_graph, d_size, size, path);
 
 	// Cleanup
 	cudaFree(d_graph); 
