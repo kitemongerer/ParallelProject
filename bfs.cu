@@ -35,18 +35,17 @@ public:
 	__device__ int parallelSetExplored(int);
 };
 
-__global__ int* exploreWave(int *d_currentWave, Node* d_graph, int *d_waveSize, int* d_cost, int * d_size) {
+__global__ void exploreWave(int *d_currentWave, Node* d_graph, int *d_waveSize, int* d_cost, int * d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 	if (idx < waveSize) {
 		printf("%i\n", idx);
-		return new int[1];
 	}
-	return new int[1];
+	
 }
 
 
 //Multiplies each element of sparse matrix by the correct vector element and puts the result back in the matrix
-__global__ void cachedVisitBFS(Node *d_graph, int *d_size) {
+/*__global__ void cachedVisitBFS(Node *d_graph, int *d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 	if (idx == 0) {
 		int waveSize = 1;
@@ -55,7 +54,7 @@ __global__ void cachedVisitBFS(Node *d_graph, int *d_size) {
 
 		int *nextWave = exploreWave(currentWave, d_graph, waveSize);
 	}
-}
+}*/
 
 Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	srand((unsigned)time(0)); 
