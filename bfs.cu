@@ -161,18 +161,18 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
     	cost[i] = -1;
     }
 
-    cudaMemcpy(d_cost, &cost, size * sizeof(int), cudaMemcpyHostToDevice);
+    cudaMemcpy(d_cost, cost, size * sizeof(int), cudaMemcpyHostToDevice);
 
-    bool stop = false;
-    while(!stop) {
+    bool complete = false;
+    while(!complete) {
     	// Copy inputs to device
 		cudaMemcpy(d_waveSize, &waveSize, sizeof(int), cudaMemcpyHostToDevice);
-		cudaMemcpy(d_currentWave, &currentWave, waveSize * sizeof(int), cudaMemcpyHostToDevice);
+		cudaMemcpy(d_currentWave, currentWave, waveSize * sizeof(int), cudaMemcpyHostToDevice);
 
     	// Launch kernel on GPU
 		exploreWave<<<gridSz, TBS>>>(d_currentWave, d_graph, d_waveSize, d_cost, d_size);
 
-		stop = true;
+		complete = true;
     }
 
 	
