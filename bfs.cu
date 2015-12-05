@@ -38,6 +38,11 @@ public:
 __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, int *d_cost, int *d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 	if (idx < *d_waveSize) {
+		Node** children = d_graph[idx].getChildren();
+		int numChildren = d_graph[idx].getNumChildren();
+		for (int i = 0; i < numChildren; i++) {
+			d_cost[children[i]->getValue()] = d_cost[idx] + 1;
+		}
 		printf("%i\n", idx);
 	}
 	
@@ -190,9 +195,13 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
 
 	// Copy result back to host
 	int *gpu_result = (int *) malloc(size * sizeof(int));
-	cudaMemcpy(gpu_result, d_graph, size * sizeof(int), cudaMemcpyDeviceToHost);
+	cudaMemcpy(gpu_result, d_cost, size * sizeof(int), cudaMemcpyDeviceToHost);
 
 	bool isCorrect = true;
+
+	for (int j = 0; j < size; j++) {
+		printf("%i cost: %i\n", j, gpu_result[j]);
+	}
 
 
 	for (int i = 0; i < path.size(); i++) {
