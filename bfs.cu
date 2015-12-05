@@ -175,7 +175,7 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
 		cudaMemcpy(d_currentWave, currentWave, waveSize * sizeof(int), cudaMemcpyHostToDevice);
 
     	// Launch kernel on GPU
-		exploreWave<<<gridSz, TBS>>>(d_currentWave, d_graph, d_waveSize, d_cost, d_size);
+		//exploreWave<<<gridSz, TBS>>>(d_currentWave, d_graph, d_waveSize, d_cost, d_size);
 
 		complete = true;
     }
