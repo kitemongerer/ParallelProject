@@ -41,6 +41,7 @@ __device__ int* exploreWave(int *currentWave, Node* d_graph, int waveSize) {
 		printf("%i\n", idx);
 		return new int[1];
 	}
+	return null;
 }
 
 
@@ -50,7 +51,7 @@ __global__ void cachedVisitBFS(Node *d_graph, int *d_size) {
 	if (idx == 0) {
 		int waveSize = 1;
 		int *currentWave = new int[waveSize];
-		currentWave[0] = d_graph[0];
+		currentWave[0] = d_graph[0].getValue();
 
 		int *nextWave = exploreWave(currentWave, d_graph, waveSize);
 	}
