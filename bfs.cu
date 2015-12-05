@@ -26,11 +26,11 @@ public:
 	Node(int);
 	__host__ __device__ int getValue();
 	void addChild(Node*);
-	Node** getChildren();
-	int getNumChildren();
+	__host__ __device__ Node** getChildren();
+	__host__ __device__ int getNumChildren();
 	void printNode();
 	void initializeChildren(int);
-	int getExplored();
+	__host__ __device__ int getExplored();
 	void setExplored(int);
 	__device__ int parallelSetExplored(int);
 };
@@ -279,11 +279,11 @@ __host__ __device__ int Node::getValue() {
 	return value;
 }
 
-Node** Node::getChildren() {
+__host__ __device__ Node** Node::getChildren() {
 	return children;
 }
 
-int Node::getNumChildren() {
+__host__ __device__ int Node::getNumChildren() {
 	return numChildren;
 }
 
@@ -310,7 +310,7 @@ void Node::initializeChildren(int numEdges) {
 	children = new Node*[numEdges];
 }
 
-int Node::getExplored() {
+__host__ __device__ int Node::getExplored() {
 	return explored;
 }
 
