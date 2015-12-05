@@ -38,19 +38,19 @@ public:
 __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, int *d_cost, int *d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 
-	if (idx < *d_waveSize) {
+	/*if (idx < *d_waveSize) {
 		printf("%i hey\n", idx);
 		Node** children = d_graph[idx].getChildren();
 		int numChildren = d_graph[idx].getNumChildren();
 		for (int i = 0; i < numChildren; i++) {
 			printf("child: %i\n", children[i]->getValue());
 			if (children[i]->getExplored() == 0) {
-				//d_cost[children[i]->getValue()] = d_cost[idx] + 1;
+				d_cost[children[i]->getValue()] = d_cost[idx] + 1;
 				d_graph[children[i]->getValue()].parallelSetExplored(1);	
 			}
 		}
 		
-	}
+	}*/
 	
 }
 
