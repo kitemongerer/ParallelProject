@@ -17,7 +17,7 @@ using namespace std;
 class Node {
 private:
 	int value;
-	Node** children;
+	int* children;
 	int numChildren;
 	int explored;
 
@@ -26,7 +26,7 @@ public:
 	Node(int);
 	__host__ __device__ int getValue();
 	void addChild(Node*);
-	__host__ __device__ Node** getChildren();
+	__host__ __device__ int* getChildren();
 	__host__ __device__ int getNumChildren();
 	void printNode();
 	void initializeChildren(int);
@@ -102,7 +102,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	return nodes; 
 }
 
-void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
+void exploreChild(Node* child, vector< vector<Node*> >* path, int depth, Node* nodes) {
 	//printf("Explore Child%i Depth: %i\n", child->getValue(), depth);
 	child->setExplored(1);
 	if (child->getNumChildren() > 0) {
@@ -114,7 +114,7 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
 		//printf("%i numChildren: %i\n", child->getValue(), child->getNumChildren());
 		//child->printNode();
 		for (int i = 0; i < child->getNumChildren(); i++) {
-			Node* newChild = child->getChildren()[i];
+			Node* newChild = &nodes[child->getChildren()[i]];
 			if (newChild->getExplored() == 0) {
 				currentPath->push_back(newChild);
 			}
@@ -124,7 +124,7 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth) {
 		for (int i = 0; i < child->getNumChildren(); i++) {
 			Node* newChild = child->getChildren()[i];
 			if (newChild->getExplored() == 0) {
-				exploreChild(newChild, path, depth + 1);	
+				exploreChild(newChild, path, depth + 1, nodes);	
 			}
 		}
 	}
@@ -141,7 +141,7 @@ vector< vector<Node*> > bfs(Node* nodes, int size) {
 	firstPath.push_back(currentNode);
 	path.push_back(firstPath);
 
-	exploreChild(currentNode, &path, 1);
+	exploreChild(currentNode, &path, 1, nodes);
 
 	return path;
 }
@@ -287,7 +287,7 @@ __host__ __device__ int Node::getValue() {
 	return value;
 }
 
-__host__ __device__ Node** Node::getChildren() {
+__host__ __device__ int* Node::getChildren() {
 	return children;
 }
 
@@ -296,7 +296,7 @@ __host__ __device__ int Node::getNumChildren() {
 }
 
 void Node::addChild(Node* child) {
-	children[numChildren] = child;
+	children[numChildren] = child->getValue();
 	numChildren++;
 
 	return;
