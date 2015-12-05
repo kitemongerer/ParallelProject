@@ -24,7 +24,7 @@ private:
 public:
 	Node();
 	Node(int);
-	int getValue();
+	__host__ __device__ int getValue();
 	void addChild(Node*);
 	Node** getChildren();
 	int getNumChildren();
@@ -237,7 +237,7 @@ Node::Node(int newValue) {
 Node::Node() {
 }
 
-int Node::getValue() {
+__host__ __device__ int Node::getValue() {
 	return value;
 }
 
