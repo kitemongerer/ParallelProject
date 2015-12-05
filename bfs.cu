@@ -41,7 +41,7 @@ __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, 
 	if (idx < *d_waveSize) {
 		printf("%i hey\n", idx);
 		Node currentNode = d_graph[d_currentWave[idx]];
-		Node** children = currentNode.getChildren();
+		int* children = currentNode.getChildren();
 		int numChildren = currentNode.getNumChildren();
 		printf("numChild: %i\n\n\n\n\n", numChildren);
 		for (int i = 0; i < numChildren; i++) {
@@ -84,7 +84,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 			int child = rand() % nNodes;
 			bool isChild = false;
 			for (int k = 0; k < nodes[i].getNumChildren(); k++){
-				if (child == nodes[i].getChildren()[k]->getValue()){
+				if (child == nodes[i].getChildren()[k]){
 					isChild = true;
 					break;
 				}
@@ -122,7 +122,7 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth, Node* n
 
 		// Explore loop after push loop so it is actually BFS
 		for (int i = 0; i < child->getNumChildren(); i++) {
-			Node* newChild = child->getChildren()[i];
+			Node* newChild = &nodes[child->getChildren()[i]];
 			if (newChild->getExplored() == 0) {
 				exploreChild(newChild, path, depth + 1, nodes);	
 			}
@@ -305,7 +305,7 @@ void Node::addChild(Node* child) {
 void Node::printNode() {
 	printf("Value: %i Children: [", value);
 	for (int i = 0; i < numChildren; i++) {
-		printf("%i", children[i]->getValue());
+		printf("%i", children[i]);
 		if (i != numChildren - 1) {
 			printf(", ");
 		}
@@ -315,7 +315,7 @@ void Node::printNode() {
 }
 
 void Node::initializeChildren(int numEdges) {
-	children = new Node*[numEdges];
+	children = new int[numEdges];
 }
 
 __host__ __device__ int Node::getExplored() {
