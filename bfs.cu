@@ -35,7 +35,7 @@ public:
 	__device__ int parallelSetExplored(int);
 };
 
-__device__ int* exploreWave(int *currentWave, Node* d_graph, int waveSize) {
+__global__ int* exploreWave(int *d_currentWave, Node* d_graph, int *d_waveSize, int* d_cost, int * d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 	if (idx < waveSize) {
 		printf("%i\n", idx);
@@ -140,13 +140,44 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
     cudaEvent_t stop;
     cudaEventCreate(&stop);
 
+    int* d_currentWave, d_waveSize, d_cost;
+
+	// Allocate space for device copies
+	cudaMalloc((void **)&d_currentWave, size * sizeof(int));
+	cudaMalloc((void **)&d_waveSize, sizeof(int));
+	cudaMalloc((void **)&d_cost, size * sizeof(int));
+
 
     int gridSz = ceil(((float) size) / TBS);
     // Record the start event
     cudaEventRecord(start, NULL);
 
-	// Launch sparseMatrixMul() kernel on GPU
-	cachedVisitBFS<<<gridSz, TBS>>>(d_graph, d_size);
+    int waveSize = 1;
+    int *currentWave = new int[waveSize];
+    currentWave[0] = 0;
+
+    int *cost = new int[size];
+    cost[0] = 0;
+    for (int i = 1; i < size; i++) {
+    	cost[i] = -1;
+    }
+
+    cudaMemcpy(d_cost, &cost, size * sizeof(int), cudaMemcpyHostToDevice);
+
+    boolean stop = false;
+    while(!stop) {
+    	// Copy inputs to device
+		cudaMemcpy(d_waveSize, &waveSize, sizeof(int), cudaMemcpyHostToDevice);
+		cudaMemcpy(d_currentWave, &currentWave, waveSize * sizeof(int), cudaMemcpyHostToDevice);
+
+    	// Launch kernel on GPU
+		exploreWave<<<gridSz, TBS>>>(d_currentWave, d_graph, d_waveSize, d_cost, d_size);
+		*d_currentWave, Node* d_graph, int *d_waveSize, int* d_cost, int * d_size
+
+		stop = true;
+    }
+
+	
 	
 	// Make sure result is finished
 	cudaDeviceSynchronize();
