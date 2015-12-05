@@ -41,7 +41,7 @@ __device__ int* exploreWave(int *currentWave, Node* d_graph, int waveSize) {
 		printf("%i\n", idx);
 		return new int[1];
 	}
-	return null;
+	return new int[1];
 }
 
 
