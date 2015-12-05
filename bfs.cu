@@ -35,7 +35,7 @@ public:
 	__device__ int parallelSetExplored(int);
 };
 
-__global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, int* d_cost, int *d_size) {
+__global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, int *d_cost, int *d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 	if (idx < *d_waveSize) {
 		printf("%i\n", idx);
