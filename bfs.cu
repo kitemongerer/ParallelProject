@@ -43,7 +43,7 @@ __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, 
 		Node currentNode = d_graph[d_currentWave[idx]];
 		Node** children = currentNode.getChildren();
 		int numChildren = currentNode.getNumChildren();
-		printf("\n\n\n\n\n");
+		printf("numChild: %i\n\n\n\n\n", numChildren);
 		for (int i = 0; i < numChildren; i++) {
 			printf("child: %i\n", children[i]->getValue());
 			if (children[i]->getExplored() == 0) {
