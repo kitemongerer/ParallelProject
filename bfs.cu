@@ -171,7 +171,6 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
 
     	// Launch kernel on GPU
 		exploreWave<<<gridSz, TBS>>>(d_currentWave, d_graph, d_waveSize, d_cost, d_size);
-		*d_currentWave, Node* d_graph, int *d_waveSize, int* d_cost, int * d_size
 
 		stop = true;
     }
