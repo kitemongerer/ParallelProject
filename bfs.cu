@@ -37,8 +37,9 @@ public:
 
 __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, int *d_cost, int *d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
-	printf("%i hey\n", idx);
+
 	if (idx < *d_waveSize) {
+		printf("%i hey\n", idx);
 		Node** children = d_graph[idx].getChildren();
 		int numChildren = d_graph[idx].getNumChildren();
 		for (int i = 0; i < numChildren; i++) {
