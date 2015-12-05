@@ -43,7 +43,7 @@ __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, 
 		for (int i = 0; i < numChildren; i++) {
 			if (children[i]->getExplored() == 0) {
 				d_cost[children[i]->getValue()] = d_cost[idx] + 1;
-				d_graph[children[i]->getValue()].setExplored(1);	
+				d_graph[children[i]->getValue()].parallelSetExplored(1);	
 			}
 			
 		}
