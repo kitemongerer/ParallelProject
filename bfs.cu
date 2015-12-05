@@ -139,7 +139,7 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
     cudaEvent_t stop;
     cudaEventCreate(&stop);
 
-    int* d_currentWave, d_waveSize, d_cost;
+    int *d_currentWave, *d_waveSize, *d_cost;
 
 	// Allocate space for device copies
 	cudaMalloc((void **)&d_currentWave, size * sizeof(int));
