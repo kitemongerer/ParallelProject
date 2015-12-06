@@ -48,7 +48,7 @@ __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, 
 			//printf("child: %i\n", children[0]->getValue());
 			if (d_graph[children[i]].getExplored() == 0) {
 				//d_cost[children[i]] = d_cost[currentNode.getValue()] + 1;
-				d_graph[children[i]].parallelSetExplored(1);	
+				//d_graph[children[i]].parallelSetExplored(1);	
 			}
 		}
 		
