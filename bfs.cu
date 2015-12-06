@@ -46,10 +46,10 @@ __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, 
 		printf("numChild: %i\n\n\n\n\n", numChildren);
 		for (int i = 0; i < numChildren; i++) {
 			//printf("child: %i\n", children[0]->getValue());
-			//if (children[i]->getExplored() == 0) {
+			if (d_graph[children[i]].getExplored() == 0) {
 				//d_cost[children[i]->getValue()] = d_cost[currentNode.getValue()] + 1;
 				//d_graph[children[i]->getValue()].parallelSetExplored(1);	
-			//}
+			}
 		}
 		
 	}
