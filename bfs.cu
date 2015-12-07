@@ -35,7 +35,7 @@ public:
 	__device__ int parallelSetExplored(int);
 };
 
-__global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int *d_cost, int *d_size int *d_maxChildren) {
+__global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int *d_cost, int *d_size, int *d_maxChildren) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 
 	if (idx < *d_size && d_waveMask[idx] == 1) {
