@@ -265,7 +265,7 @@ int main (int argc, char **argv) {
 	int* children = generateChildren(nodes, size, maxEdgesPerNode);
 
 	Node* d_graph;
-	int* d_children, d_size, d_waveMask;
+	int *d_children, *d_size;
 
 	// Allocate space for device copies
 	cudaMalloc((void **)&d_graph, size * sizeof(Node));
