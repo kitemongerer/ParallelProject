@@ -35,17 +35,18 @@ public:
 	__device__ int parallelSetExplored(int);
 };
 
-__global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int *d_cost, int *d_size, int *d_maxChildren) {
+__global__ void exploreWave(int *d_waveMask, int *d_nextWaveMask, Node *d_graph, int *d_children, int *d_cost, int *d_size, int *d_maxChildren) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 
 	if (idx < *d_size && d_waveMask[idx] == 1) {
 
-		printf("%i child\n", d_children[0]);
+		printf("%i child\n", d_children[idx]);
 		Node currentNode = d_graph[idx];
 		int numChildren = currentNode.getNumChildren();
 		
 		for (int i = 0; i < numChildren; i++) {
 			int child = d_children[idx * *d_maxChildren + i];
+			atomicCAS(&d_nextWaveMask[child],0,1);
 			if (d_waveMask[child] == 0) {
 				printf("%i child: %i\n\n\n", idx, child);
 				d_cost[child] = d_cost[idx] + 1;
@@ -159,11 +160,12 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
     cudaEvent_t stop;
     cudaEventCreate(&stop);
 
-    int *d_cost, *d_waveMask;
+    int *d_cost, *d_waveMask, *d_nextWaveMask;
 
 	// Allocate space for device copies
 	cudaMalloc((void **)&d_cost, size * sizeof(int));
 	cudaMalloc((void **)&d_waveMask, size * sizeof(int));
+	cudaMalloc((void **)&d_nextWaveMask, size * sizeof(int));
 
 
     int gridSz = ceil(((float) size) / TBS);
@@ -171,25 +173,33 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
     cudaEventRecord(start, NULL);
 
     int *waveMask = new int[size];
-    
+    int *nextWaveMask = new int[size]; 
 
     int *cost = new int[size];
     cost[0] = 0;
     for (int i = 1; i < size; i++) {
     	cost[i] = -1;
     	waveMask[i] = 0;
+	nextWaveMask[i] = 0;
     }
 
     waveMask[0] = 1;
 
     cudaMemcpy(d_cost, cost, size * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_waveMask, waveMask, size * sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
+    
     bool complete = false;
     while(!complete) {
 
     	// Launch kernel on GPU
-		exploreWave<<<gridSz, TBS>>>(d_waveMask, d_graph, d_children, d_cost, d_size, d_maxChildren);
+		exploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_graph, d_children, d_cost, d_size, d_maxChildren);
+		
+		cudaMemcpy(d_waveMask, d_nextWaveMask, size * sizeof(int), cudaMemcpyDeviceToDevice);
+		cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 
+		exploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_graph, d_children, d_cost, d_size, d_maxChildren);
+		
 		complete = true;
     }
 
