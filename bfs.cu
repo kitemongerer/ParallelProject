@@ -41,14 +41,19 @@ __global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int
 	if (idx < *d_size && d_waveMask[idx] == 1) {
 		printf("%i hey\n", idx);
 		Node currentNode = d_graph[idx];
-		int* children = new int[currentNode.getNumChildren()];
-		int j = 0;
-		for (int i = idx * *d_maxChildren; i < idx * *d_maxChildren + currentNode.getNumChildren(); i++) {
-			children[j] = d_children[i];
-			j++;
+		//int* children = new int[currentNode.getNumChildren()];
+		int numChildren = currentNode.getNumChildren();
+		
+		for (int i = 0; i < numChildren; i++) {
+			int child = d_children[idx * *d_maxChildren + i];
+			if (d_waveMask[child] == 0) {
+				printf("%i\n", idx);
+				d_cost[[child] = d_cost[idx] + 1;
+				//d_graph[children[i]].parallelSetExplored(1);	
+			}
 		}
 		
-		for (int i = 0; i < currentNode.getNumChildren(); i++) {
+		/*for (int i = 0; i < currentNode.getNumChildren(); i++) {
 			//printf("child: %i\n", children[0]->getValue());
 
 			printf("%i node: %i\n\n\n", idx, d_waveMask[idx]);
@@ -58,7 +63,7 @@ __global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int
 				d_cost[children[i]] = d_cost[idx] + 1;
 				//d_graph[children[i]].parallelSetExplored(1);	
 			}
-		}
+		}*/
 		
 	}
 	
