@@ -55,10 +55,8 @@ __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, 
 				d_cost[children[i]] = d_cost[d_currentWave[idx]] + 1;
 				//d_graph[children[i]].parallelSetExplored(1);	
 			}
-		}
-		
-	}
-	
+		}	
+	}	
 }
 
 
@@ -285,11 +283,11 @@ void callDeviceSwitchingBFS(Node *d_graph, int *d_size, int branchingFactor, int
 __global__ void naiveBFS(Node* d_graph, Node* d_newFrontier, int* d_frontier_size){
 	int gID = blockIdx.x * TBS + threadIdx.x;
 
-	//if(gID < d_frontier_size){
-		
-//	}
+	int currentSpot = *d_frontier_size;
+	if(gID == 0){
+		int* tmp = d_newFrontier[0].getChildren();
+	}
 }
-
 
 void callDeviceNaiveBFS(Node* d_graph, Node* nodes, int size){
 	Node* frontierList = new Node[size - 1];
@@ -322,7 +320,7 @@ void callDeviceNaiveBFS(Node* d_graph, Node* nodes, int size){
 		cudaMemcpy(frontierList, d_frontierList, sizeof(frontierList), cudaMemcpyDeviceToHost);
 	}
 
-	
+
 }
 
 int main (int argc, char **argv) {
