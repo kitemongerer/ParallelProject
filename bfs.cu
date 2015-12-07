@@ -243,6 +243,11 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
 		} 
 	}*/
 }
+void callDeviceSwitchingBFS(Node *d_graph, int *d_size, int branchingFactor, int size, vector< vector<Node*> > path) {
+	int switchpoint =(int)( log10((double)size/2) / log10((double)branchingFactor) );
+	cout << switchpoint;
+
+}
 
 int main (int argc, char **argv) {
 	if (argc !=3) {
