@@ -89,7 +89,7 @@ int* generateChildren(Node *nodes, int nNodes, int maxEdgesPerNode) {
 				}
 			}
 			if (!isChild && child != nodes[i].getValue()){
-				children[i * maxEdgesPerNode + nodes[i].getNumChildren()]
+				children[i * maxEdgesPerNode + nodes[i].getNumChildren()];
 				nodes[i].addChild(&nodes[child]);
 			}
 		}
@@ -99,6 +99,7 @@ int* generateChildren(Node *nodes, int nNodes, int maxEdgesPerNode) {
 		nodes[i].printNode();
 	}
 
+	return children;
 }
 
 Node* generateGraph(int nNodes) {
@@ -157,7 +158,7 @@ vector< vector<Node*> > bfs(Node* nodes, int size) {
 	return path;
 }
 
-void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, *d_children, int size, vector< vector<Node*> > path) {
+void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int size, vector< vector<Node*> > path) {
 	cudaEvent_t start;
 	cudaEventCreate(&start);
     cudaEvent_t stop;
@@ -222,6 +223,7 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, *d_children, int size,
 
 
 	for (int i = 0; i < path.size(); i++) {
+		isCorrect = true;
 		printf("%i - ", i);
 		for (int j = 0; j < path[i].size(); j++) {
 			printf(" %i ", path[i][j]->getValue());
