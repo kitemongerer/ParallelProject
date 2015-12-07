@@ -100,7 +100,7 @@ int* generateChildren(Node *nodes, int nNodes, int maxEdgesPerNode) {
 				}
 			}
 			if (!isChild && child != nodes[i].getValue()){
-				children[i * maxEdgesPerNode + nodes[i].getNumChildren()];
+				children[i * maxEdgesPerNode + nodes[i].getNumChildren()] = child;
 				nodes[i].addChild(&nodes[child]);
 			}
 		}
