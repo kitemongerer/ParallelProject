@@ -277,7 +277,7 @@ int main (int argc, char **argv) {
 
 	Node* d_graph;
 	int *d_children, *d_size, *d_maxChildren;
-
+printf("main child: %i\n", children[0]);
 	// Allocate space for device copies
 	cudaMalloc((void **)&d_graph, size * sizeof(Node));
 	cudaMalloc((void **)&d_size, sizeof(int));
