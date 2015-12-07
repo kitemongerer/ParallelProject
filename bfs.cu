@@ -48,6 +48,7 @@ __global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int
 			int child = d_children[idx * *d_maxChildren + i];
 			if (d_waveMask[child] == 0) {
 				printf("%i\n", idx);
+				printf("%i child: %i\n\n\n", idx, child);
 				d_cost[child] = d_cost[idx] + 1;
 				//d_graph[children[i]].parallelSetExplored(1);	
 			}
