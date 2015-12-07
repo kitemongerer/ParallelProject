@@ -46,7 +46,9 @@ __global__ void exploreWave(int *d_waveMask, int *d_nextWaveMask, Node *d_graph,
 		
 		for (int i = 0; i < numChildren; i++) {
 			int child = d_children[idx * *d_maxChildren + i];
+			
 			atomicCAS(&d_nextWaveMask[child],0,1);
+					
 			if (d_waveMask[child] == 0) {
 				printf("%i child: %i\n\n\n", idx, child);
 				d_cost[child] = d_cost[idx] + 1;
@@ -198,9 +200,14 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 		cudaMemcpy(d_waveMask, d_nextWaveMask, size * sizeof(int), cudaMemcpyDeviceToDevice);
 		cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 
-		exploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_graph, d_children, d_cost, d_size, d_maxChildren);
-		
+		//exploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_graph, d_children, d_cost, d_size, d_maxChildren);
 		complete = true;
+		cudaMemcpy(waveMask, d_waveMask, size * sizeof(int), cudaMemcpyDeviceToHost);
+		for(int i = 0 ; i < size; i++){
+			if(waveMask[i] == 1){
+				complete = false;
+			}
+		}
     }
 
 	
