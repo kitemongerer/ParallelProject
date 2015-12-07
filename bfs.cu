@@ -56,9 +56,20 @@ __global__ void exploreWave(int *d_waveMask, int *d_nextWaveMask, Node *d_graph,
 			}
 		}
 	}
+	if(idx < *d_size && d_waveMask[idx] == 2){
+		d_nextWaveMask[idx] = 2;
+	}
 }
 
+__global__ void setPreviousExplored(int *d_waveMask, int *d_nextWaveMask, int *d_size){
+	int idx = blockIdx.x * TBS + threadIdx.x;
 
+	if(idx < *d_size){
+		if(d_waveMask[idx] == 1){
+			d_nextWaveMask[idx] = 2;
+		}
+	}
+}
 //Multiplies each element of sparse matrix by the correct vector element and puts the result back in the matrix
 /*__global__ void cachedVisitBFS(Node *d_graph, int *d_size) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
@@ -196,7 +207,9 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 
     	// Launch kernel on GPU
 		exploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_graph, d_children, d_cost, d_size, d_maxChildren);
-		
+		cudaDeviceSynchronize();
+		setPreviousExplored<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_size);		
+		cudaDeviceSynchronize();
 		cudaMemcpy(d_waveMask, d_nextWaveMask, size * sizeof(int), cudaMemcpyDeviceToDevice);
 		cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 
@@ -208,6 +221,7 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 				complete = false;
 			}
 		}
+		printf("\n");
     }
 
 	
