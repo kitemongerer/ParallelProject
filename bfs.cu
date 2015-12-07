@@ -73,13 +73,8 @@ __global__ void exploreWave(int *d_currentWave, Node *d_graph, int *d_waveSize, 
 	}
 }*/
 
-Node* generateGraph(int nNodes, int maxEdgesPerNode) {
-	srand((unsigned)time(0)); 
-	Node* nodes = new Node[nNodes];
-	for (int i = 0; i < nNodes; i++) {
-		Node* tmp = new Node(i);
-		nodes[i] = *tmp;
-	}
+int* generateChildren(Node *nodes, int nNodes, int maxEdgesPerNode) {
+	int* children = new int[nNodes * maxEdgesPerNode];
 
 	for (int i = 0; i < nNodes; i++) {
 		int numEdges = (rand() % maxEdgesPerNode) + 1;
@@ -94,6 +89,7 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 				}
 			}
 			if (!isChild && child != nodes[i].getValue()){
+				children[i * maxEdgesPerNode + nodes[i].getNumChildren()]
 				nodes[i].addChild(&nodes[child]);
 			}
 		}
@@ -101,6 +97,17 @@ Node* generateGraph(int nNodes, int maxEdgesPerNode) {
 	
 	for (int i = 0; i < nNodes; i++) {
 		nodes[i].printNode();
+	}
+
+}
+
+Node* generateGraph(int nNodes) {
+	srand((unsigned)time(0)); 
+	Node* nodes = new Node[nNodes];
+	
+	for (int i = 0; i < nNodes; i++) {
+		Node* tmp = new Node(i);
+		nodes[i] = *tmp;
 	}
 
 	return nodes; 
@@ -150,44 +157,42 @@ vector< vector<Node*> > bfs(Node* nodes, int size) {
 	return path;
 }
 
-void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vector<Node*> > path) {
+void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, *d_children, int size, vector< vector<Node*> > path) {
 	cudaEvent_t start;
 	cudaEventCreate(&start);
     cudaEvent_t stop;
     cudaEventCreate(&stop);
 
-    int *d_currentWave, *d_waveSize, *d_cost;
+    int *d_cost, *d_waveMask;
 
 	// Allocate space for device copies
-	cudaMalloc((void **)&d_currentWave, size * sizeof(int));
-	cudaMalloc((void **)&d_waveSize, sizeof(int));
 	cudaMalloc((void **)&d_cost, size * sizeof(int));
+	cudaMalloc((void **)&d_waveMask, size * sizeof(int));
 
 
     int gridSz = ceil(((float) size) / TBS);
     // Record the start event
     cudaEventRecord(start, NULL);
 
-    int waveSize = 1;
-    int *currentWave = new int[waveSize];
-    currentWave[0] = 0;
+    int *waveMask = new int[size];
+    
 
     int *cost = new int[size];
     cost[0] = 0;
     for (int i = 1; i < size; i++) {
     	cost[i] = -1;
+    	waveMask[i] = 0;
     }
 
-    cudaMemcpy(d_cost, cost, size * sizeof(int), cudaMemcpyHostToDevice);
+    waveMask[0] = 1;
 
+    cudaMemcpy(d_cost, cost, size * sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(d_waveMask, waveMask, size * sizeof(int), cudaMemcpyHostToDevice);
     bool complete = false;
     while(!complete) {
-    	// Copy inputs to device
-		cudaMemcpy(d_waveSize, &waveSize, sizeof(int), cudaMemcpyHostToDevice);
-		cudaMemcpy(d_currentWave, currentWave, waveSize * sizeof(int), cudaMemcpyHostToDevice);
 
     	// Launch kernel on GPU
-		exploreWave<<<gridSz, TBS>>>(d_currentWave, d_graph, d_waveSize, d_cost, d_size);
+		exploreWave<<<gridSz, TBS>>>(d_waveMask, d_graph, d_children, d_cost, d_size);
 
 		complete = true;
     }
@@ -254,27 +259,31 @@ int main (int argc, char **argv) {
 	int size = atoi(argv[1]);
 	int maxEdgesPerNode = atoi(argv[2]);
 
-	Node* nodes = generateGraph(size, maxEdgesPerNode);
+	Node* nodes = generateGraph(size);
+	int* children = generateChildren(nodes, size, maxEdgesPerNode);
 
 	Node* d_graph;
-	int* d_size;
+	int* d_children, d_size, d_waveMask;
 
 	// Allocate space for device copies
 	cudaMalloc((void **)&d_graph, size * sizeof(Node));
 	cudaMalloc((void **)&d_size, sizeof(int));
+	cudaMalloc((void **)&d_children, size * maxEdgesPerNode * sizeof(int));
 
 	// Copy inputs to device
 	cudaMemcpy(d_graph, nodes, size * sizeof(Node), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_size, &size, sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(d_children, children, size * maxEdgesPerNode * sizeof(int), cudaMemcpyHostToDevice);
 
 	//Synchronouse bfs
 	vector< vector<Node*> > path = bfs(nodes, size);
 
-	callDeviceCachedVisitBFS(d_graph, d_size, size, path);
+	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, path);
 
 	// Cleanup
 	cudaFree(d_graph); 
-	cudaFree(d_size); 
+	cudaFree(d_size);
+	cudaFree(d_children);
 
 	return 0;
 }
