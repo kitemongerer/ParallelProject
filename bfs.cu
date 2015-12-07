@@ -43,16 +43,15 @@ __global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int
 		Node currentNode = d_graph[idx];
 		int* children = new int[currentNode.getNumChildren()];
 		int j = 0;
-		for (int i = idx * d_maxChildren; i < idx * d_maxChildren + currentNode.getNumChildren(); i++) {
+		for (int i = idx * *d_maxChildren; i < idx * *d_maxChildren + currentNode.getNumChildren(); i++) {
 			children[j] = d_children[i];
 			j++;
 		}
 		
-		printf("numChild: %i\n\n\n\n\n", numChildren);
 		for (int i = 0; i < numChildren; i++) {
 			//printf("child: %i\n", children[0]->getValue());
 
-			printf("%i node: %i\n\n\n", idx, d_currentWave[idx]);
+			printf("%i node: %i\n\n\n", idx, d_waveMask[idx]);
 			printf("%i child: %i\n\n\n", idx, children[i]);
 			if (d_waveMask[children[i]].getExplored() == 0) {
 				printf("%i\n", idx);
