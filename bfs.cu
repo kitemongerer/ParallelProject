@@ -39,11 +39,9 @@ __global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int
 	int idx = blockIdx.x * TBS + threadIdx.x;
 
 	if (idx < *d_size && d_waveMask[idx] == 1) {
-		printf("%i hey\n", idx);
 
 		printf("%i child\n", d_children[0]);
 		Node currentNode = d_graph[idx];
-		//int* children = new int[currentNode.getNumChildren()];
 		int numChildren = currentNode.getNumChildren();
 		
 		for (int i = 0; i < numChildren; i++) {
@@ -54,21 +52,7 @@ __global__ void exploreWave(int *d_waveMask, Node *d_graph, int *d_children, int
 				//d_graph[children[i]].parallelSetExplored(1);	
 			}
 		}
-		
-		/*for (int i = 0; i < currentNode.getNumChildren(); i++) {
-			//printf("child: %i\n", children[0]->getValue());
-
-			printf("%i node: %i\n\n\n", idx, d_waveMask[idx]);
-			printf("%i child: %i\n\n\n", idx, children[i]);
-			if (d_graph[d_waveMask[children[i]]].getExplored() == 0) {
-				printf("%i\n", idx);
-				d_cost[children[i]] = d_cost[idx] + 1;
-				//d_graph[children[i]].parallelSetExplored(1);	
-			}
-		}*/
-		
 	}
-	
 }
 
 
@@ -277,7 +261,7 @@ int main (int argc, char **argv) {
 
 	Node* d_graph;
 	int *d_children, *d_size, *d_maxChildren;
-printf("main child: %i\n", children[0]);
+
 	// Allocate space for device copies
 	cudaMalloc((void **)&d_graph, size * sizeof(Node));
 	cudaMalloc((void **)&d_size, sizeof(int));
