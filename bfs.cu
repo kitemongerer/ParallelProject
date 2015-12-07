@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <math.h>
 #include <vector>
+#include <queue>
 
 // CUDA runtime
 #include <cuda_runtime.h>
@@ -22,7 +23,7 @@ private:
 	int explored;
 
 public:
-	Node();
+	__host__ __device__ Node();
 	Node(int);
 	__host__ __device__ int getValue();
 	void addChild(Node*);
@@ -243,10 +244,85 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int size, vector< vect
 		} 
 	}*/
 }
-void callDeviceSwitchingBFS(Node *d_graph, int *d_size, int branchingFactor, int size, vector< vector<Node*> > path) {
-	int switchpoint =(int)( log10((double)size/2) / log10((double)branchingFactor) );
-	cout << switchpoint;
 
+//TODO: switching BFS Code **********************************************************************************************************************
+/*
+__device__ Node* exploreFrontier(Node *d_graph, int *d_size, int * d_switchpoint){
+
+	return d_graph;
+}
+
+__global__ void switchingBFS(Node *d_graph, int *d_size, int *d_switchpoint){
+	int gID = blockIdx.x * TBS + threadIdx.x;
+	Node *d_frontier = new Node[1];
+	d_frontier[0] = d_graph[0];
+	int d_frontier_size = 1;
+	if(gID < d_frontier_size){
+
+	}	
+}
+
+void callDeviceSwitchingBFS(Node *d_graph, int *d_size, int branchingFactor, int size, Node* nodes) {
+	int switchpoint =(int)( log10((double)size/2) / log10((double)branchingFactor) );
+	printf("%i\n", branchingFactor);
+	printf("%i\n", switchpoint);
+
+
+	int* d_switchpoint;
+
+	cudaMalloc((void **)&d_switchpoint, sizeof(int));	
+	
+	cudaMemcpy(d_switchpoint, &switchpoint, sizeof(int), cudaMemcpyHostToDevice);
+	
+    	int gridSz = ceil(((float) size) / TBS);
+
+	switchingBFS<<<gridSz, TBS>>> (d_graph, d_size, d_switchpoint);	
+
+	cudaFree(d_switchpoint);
+}
+*/
+
+__global__ void naiveBFS(Node* d_graph, Node* d_newFrontier, int* d_frontier_size){
+	int gID = blockIdx.x * TBS + threadIdx.x;
+
+	//if(gID < d_frontier_size){
+		
+//	}
+}
+
+
+void callDeviceNaiveBFS(Node* d_graph, Node* nodes, int size){
+	Node* frontierList = new Node[size - 1];
+	frontierList[0] = nodes[0];
+	
+
+	//Create device variables
+	Node* d_frontierList;
+	int* d_frontierSize;
+	//allocate memory on device
+	cudaMalloc((void**)&d_frontierList, sizeof(frontierList));	
+
+	// Define grid size
+	int gridSz = ceil(((float) size) / TBS);
+	
+	//copy over initial frontier list
+	cudaMemcpy(d_frontierList, &frontierList, sizeof(frontierList), cudaMemcpyHostToDevice);
+	
+	while(frontierList[0].getValue() != NULL){
+		int frontierSize = 1;
+		while(frontierList[frontierSize].getValue() != NULL){
+			frontierSize++;
+		}
+
+		cudaMalloc((void**) &d_frontierSize, sizeof(int));
+		cudaMemcpy(d_frontierSize, &frontierSize, sizeof(int), cudaMemcpyHostToDevice);
+	
+		naiveBFS<<<gridSz, TBS>>>(d_graph, d_frontierList, d_frontierSize);
+
+		cudaMemcpy(frontierList, d_frontierList, sizeof(frontierList), cudaMemcpyDeviceToHost);
+	}
+
+	
 }
 
 int main (int argc, char **argv) {
@@ -275,8 +351,12 @@ int main (int argc, char **argv) {
 	//Synchronouse bfs
 	vector< vector<Node*> > path = bfs(nodes, size);
 
+	//parallel bfs
 	callDeviceCachedVisitBFS(d_graph, d_size, size, path);
 
+	//TODO:implement the reversingBFS *********************************************************************************************************************************************************
+	//callDeviceSwitchingBFS(d_graph, d_size, maxEdgesPerNode/2, size, nodes);
+	
 	// Cleanup
 	cudaFree(d_graph); 
 	cudaFree(d_size); 
@@ -289,7 +369,7 @@ Node::Node(int newValue) {
 	explored = 0;
 }
 
-Node::Node() {
+__host__ __device__ Node::Node() {
 }
 
 __host__ __device__ int Node::getValue() {
