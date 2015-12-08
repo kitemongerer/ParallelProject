@@ -201,6 +201,7 @@ int* bfs(Node* nodes, int size) {
 
 	int depth = 0;
 	while (!wave.empty()) {
+		depth = cost[wave.front()->getValue()];
 		while (depth == cost[wave.front()->getValue()]) {
 			currentNode = wave.front();
 			wave.pop();
@@ -214,7 +215,6 @@ int* bfs(Node* nodes, int size) {
 				}
 			}
 		}
-		depth++;
 	}
 
 	return cost;
@@ -281,10 +281,15 @@ void callFlipFlopWaveExplore(int *d_size, int *d_children, int *d_numChildren, i
 	cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
     
     bool complete = false;
+    int completed = 0;
     while(!complete) {
-
     	// Launch kernel on GPU
-		childListExploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
+    	if (completed < size / 2) {
+    		childListExploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
+    	} else {
+    		backwardsWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
+    	}
+		
 		cudaDeviceSynchronize();
 		setPreviousExplored<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_size);		
 		cudaDeviceSynchronize();
@@ -293,9 +298,11 @@ void callFlipFlopWaveExplore(int *d_size, int *d_children, int *d_numChildren, i
 
 		complete = true;
 		cudaMemcpy(waveMask, d_waveMask, size * sizeof(int), cudaMemcpyDeviceToHost);
-		for(int i = 0 ; i < size; i++){
-			if(waveMask[i] == 1){
+		for(int i = 0 ; i < size; i++) {
+			if(waveMask[i] == 1) {
 				complete = false;
+			} else if (waveMask[i] == 2) {
+				completed += 1;
 			}
 		}
     }
@@ -311,7 +318,7 @@ void callFlipFlopWaveExplore(int *d_size, int *d_children, int *d_numChildren, i
 	float msecTotal = 0.0f;
     cudaEventElapsedTime(&msecTotal, start, stop);
 
-    printf("GPU Child List Explore Time= %.3f msec\n", msecTotal);
+    printf("GPU Flip Flop Explore Time= %.3f msec\n", msecTotal);
 
 	// Copy result back to host
 	int *gpu_result = (int *) malloc(size * sizeof(int));
