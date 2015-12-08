@@ -98,8 +98,6 @@ __global__ void exploreWave(int *d_waveMask, int *d_nextWaveMask, Node *d_graph,
 	int idx = blockIdx.x * TBS + threadIdx.x;
 
 	if (idx < *d_size && d_waveMask[idx] == 1) {
-
-		//printf("%i child\n", d_children[idx]);
 		Node currentNode = d_graph[idx];
 		int numChildren = currentNode.getNumChildren();
 		
@@ -207,7 +205,6 @@ int* bfs(Node* nodes, int size) {
 	for (int i = 0; i < size; i++) {
 		cost[i] = -1;
 	}
-	printf("\n\n\n\n\n\n");
 
 	Node* currentNode = &nodes[0];
 	queue<Node*> wave;
@@ -298,7 +295,6 @@ int* transformParents(Node* nodes, int size, int* parentPtr) {
 		if (node->getNumChildren() > 0) {
 			int *children = node->getChildren();
 			for (int j = 0; j < node->getNumChildren(); j++) {
-				printf("node: %i child: %i parentPtr: %i\n", i, children[j], curIdx[children[j]]);
 				int child = children[j];
 				result[curIdx[child]] = i;
 				curIdx[child] = curIdx[child] + 1;
@@ -694,15 +690,15 @@ int main (int argc, char **argv) {
 	int numEdges = parentPtr[size];
 	int* parent = transformParents(nodes, size, parentPtr);
 
-	for (int i = 0; i < size + 1; i++) {
+	/*for (int i = 0; i < size + 1; i++) {
 		printf("%i parentPtr: %i\n", i, parentPtr[i]);
 	}
 	
 	for (int i = 0; i < size; i++) {
 		for (int j = parentPtr[i]; j < parentPtr[i + 1]; j++) {
-			printf("%i parent: %i\n", i, parent[j]);
+			printf("%i child: %i parent: %i\n", j, i, parent[j]);
 		}
-	}
+	}*/
 
 	Node* d_graph;
 	int *d_children, *d_size, *d_maxChildren, *d_numChildren, *d_parent, *d_parentPtr;
