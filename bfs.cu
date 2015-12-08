@@ -35,12 +35,33 @@ public:
 	__device__ int parallelSetExplored(int);
 };
 
+__global__ void childListExploreWave(int *d_waveMask, int *d_nextWaveMask, int *d_children, int *d_numChildren, int *d_cost, int *d_size, int *d_maxChildren) {
+	int idx = blockIdx.x * TBS + threadIdx.x;
+
+	if (idx < *d_size && d_waveMask[idx] == 1) {
+		int numChildren = d_numChildren[idx];
+		
+		for (int i = 0; i < numChildren; i++) {
+			int child = d_children[idx * *d_maxChildren + i];
+			
+			atomicCAS(&d_nextWaveMask[child],0,1);
+					
+			if (d_waveMask[child] == 0) {
+				d_cost[child] = d_cost[idx] + 1;
+			}
+		}
+	}
+	if(idx < *d_size && d_waveMask[idx] == 2){
+		d_nextWaveMask[idx] = 2;
+	}
+}
+
 __global__ void exploreWave(int *d_waveMask, int *d_nextWaveMask, Node *d_graph, int *d_children, int *d_cost, int *d_size, int *d_maxChildren) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
 
 	if (idx < *d_size && d_waveMask[idx] == 1) {
 
-		printf("%i child\n", d_children[idx]);
+		//printf("%i child\n", d_children[idx]);
 		Node currentNode = d_graph[idx];
 		int numChildren = currentNode.getNumChildren();
 		
@@ -50,7 +71,7 @@ __global__ void exploreWave(int *d_waveMask, int *d_nextWaveMask, Node *d_graph,
 			atomicCAS(&d_nextWaveMask[child],0,1);
 					
 			if (d_waveMask[child] == 0) {
-				printf("%i child: %i\n\n\n", idx, child);
+				//printf("%i child: %i\n\n\n", idx, child);
 				d_cost[child] = d_cost[idx] + 1;
 				//d_graph[children[i]].parallelSetExplored(1);	
 			}
@@ -179,6 +200,100 @@ int* transformNumChildren(Node* nodes, int size) {
 	return result;
 }
 
+void callChildListExploreWave(int *d_size, int *d_children, int *d_numChildren, int size, int *d_maxChildren, int *synchResult) {
+	cudaEvent_t start;
+	cudaEventCreate(&start);
+    cudaEvent_t stop;
+    cudaEventCreate(&stop);
+
+    int *d_cost, *d_waveMask, *d_nextWaveMask;
+
+	// Allocate space for device copies
+	cudaMalloc((void **)&d_cost, size * sizeof(int));
+	cudaMalloc((void **)&d_waveMask, size * sizeof(int));
+	cudaMalloc((void **)&d_nextWaveMask, size * sizeof(int));
+
+
+    int gridSz = ceil(((float) size) / TBS);
+    // Record the start event
+    cudaEventRecord(start, NULL);
+
+    int *waveMask = new int[size];
+    int *nextWaveMask = new int[size]; 
+
+    int *cost = new int[size];
+    cost[0] = 0;
+    for (int i = 1; i < size; i++) {
+    	cost[i] = -1;
+    	waveMask[i] = 0;
+		nextWaveMask[i] = 0;
+    }
+
+    waveMask[0] = 1;
+
+    cudaMemcpy(d_cost, cost, size * sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(d_waveMask, waveMask, size * sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
+    
+    bool complete = false;
+    while(!complete) {
+
+    	// Launch kernel on GPU
+		childListExploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
+		cudaDeviceSynchronize();
+		setPreviousExplored<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_size);		
+		cudaDeviceSynchronize();
+		cudaMemcpy(d_waveMask, d_nextWaveMask, size * sizeof(int), cudaMemcpyDeviceToDevice);
+		cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
+
+		complete = true;
+		cudaMemcpy(waveMask, d_waveMask, size * sizeof(int), cudaMemcpyDeviceToHost);
+		for(int i = 0 ; i < size; i++){
+			if(waveMask[i] == 1){
+				complete = false;
+			}
+		}
+		printf("\n");
+    }
+
+	
+	
+	// Make sure result is finished
+	cudaDeviceSynchronize();
+
+	// Record end event
+	cudaEventRecord(stop, NULL);
+	cudaEventSynchronize(stop);
+	float msecTotal = 0.0f;
+    cudaEventElapsedTime(&msecTotal, start, stop);
+
+    printf("GPU Time= %.3f msec\n", msecTotal);
+
+	// Copy result back to host
+	int *gpu_result = (int *) malloc(size * sizeof(int));
+	cudaMemcpy(gpu_result, d_cost, size * sizeof(int), cudaMemcpyDeviceToHost);
+
+	bool isCorrect = true;
+
+	for (int j = 0; j < size; j++) {
+		printf("%i cost: %i\n", j, gpu_result[j]);
+	}
+
+
+	for (int i = 0; i < size; i++) {
+		if (synchResult[i] != gpu_result[i]) {
+			isCorrect = false;
+			printf("%i CPU: %i GPU:%i\n", i, synchResult[i], gpu_result[i]);
+		}
+	}
+
+	if (!isCorrect) {
+		printf("The results do not match\n");
+	} else {
+		printf("The results match\n");
+	}
+}
+
 void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int size, int *d_maxChildren, int *synchResult) {
 	cudaEvent_t start;
 	cudaEventCreate(&start);
@@ -296,18 +411,23 @@ int main (int argc, char **argv) {
 	cudaMalloc((void **)&d_size, sizeof(int));
 	cudaMalloc((void **)&d_maxChildren, sizeof(int));
 	cudaMalloc((void **)&d_children, size * maxEdgesPerNode * sizeof(int));
+	cudaMalloc((void **)&d_numChildren, size * sizeof(int));
 
 	// Copy inputs to device
 	cudaMemcpy(d_graph, nodes, size * sizeof(Node), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_size, &size, sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_maxChildren, &maxEdgesPerNode, sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_children, children, size * maxEdgesPerNode * sizeof(int), cudaMemcpyHostToDevice);
+	cudaMemcpy(d_numChildren, numChildren, size * sizeof(int), cudaMemcpyHostToDevice);
 
 	//Synchronouse bfs
 	vector< vector<Node*> > path = bfs(nodes, size);
 	int *synchResult = transformBfs(path, size);
 
 	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
+
+	callChildListExploreWave(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
+
 
 	// Cleanup
 	cudaFree(d_graph); 
