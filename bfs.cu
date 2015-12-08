@@ -183,6 +183,9 @@ vector< vector<Node*> > bfs(Node* nodes, int size) {
 
 int* transformBfs(vector< vector<Node*> > path, int size) {
 	int *result = new int[size];
+	for (int i = 0; i < size; i++) {
+		result[i] = -1;
+	}
 	for (int i = 0; i < path.size(); i++) {
 		printf("%i - ", i);
 		for (int j = 0; j < path[i].size(); j++) {
