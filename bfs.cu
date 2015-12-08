@@ -41,7 +41,7 @@ __global__ void parentListBackwardsWave(int *d_waveMask, int *d_nextWaveMask, in
 
 	if (idx < *d_size && d_waveMask[idx] == 0) {
 		// Loop through all children
-		for (int i = d_parentPtr[idx]; i < *d_parentPtr[idx + 1]; i++) {
+		for (int i = d_parentPtr[idx]; i < d_parentPtr[idx + 1]; i++) {
 			if (d_waveMask[d_parent[i]] == 1) {
 				atomicCAS(&d_nextWaveMask[idx], 0, 1);
 				d_cost[idx] = d_cost[d_parent[i]] + 1;
@@ -262,7 +262,7 @@ int* transformNumChildren(Node* nodes, int size) {
 	return result;
 }
 
-int* transformParentsPtr(Node* nodes, int size) {
+int* transformParentPtr(Node* nodes, int size) {
 	int *result = new int[size + 1];
 	for (int i = 0; i < size; i++) {
 		result[i] = 0;
