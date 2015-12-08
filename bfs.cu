@@ -71,9 +71,7 @@ __global__ void exploreWave(int *d_waveMask, int *d_nextWaveMask, Node *d_graph,
 			atomicCAS(&d_nextWaveMask[child],0,1);
 					
 			if (d_waveMask[child] == 0) {
-				//printf("%i child: %i\n\n\n", idx, child);
 				d_cost[child] = d_cost[idx] + 1;
-				//d_graph[children[i]].parallelSetExplored(1);	
 			}
 		}
 	}
@@ -113,7 +111,6 @@ int* generateChildren(Node *nodes, int nNodes, int maxEdgesPerNode) {
 			}
 		}
 	}
-	
 	for (int i = 0; i < nNodes; i++) {
 		nodes[i].printNode();
 	}
@@ -187,12 +184,12 @@ int* transformBfs(vector< vector<Node*> > path, int size) {
 		result[i] = -1;
 	}
 	for (int i = 0; i < path.size(); i++) {
-		printf("%i - ", i);
+		//printf("%i - ", i);
 		for (int j = 0; j < path[i].size(); j++) {
-			printf(" %i ", path[i][j]->getValue());
+			//printf(" %i ", path[i][j]->getValue());
 			result[path[i][j]->getValue()] = i;
 		}
-		printf("\n");
+		//printf("\n");
 	}
 	return result;
 }
@@ -258,7 +255,6 @@ void callChildListExploreWave(int *d_size, int *d_children, int *d_numChildren, 
 				complete = false;
 			}
 		}
-		printf("\n");
     }
 
 	
@@ -272,18 +268,13 @@ void callChildListExploreWave(int *d_size, int *d_children, int *d_numChildren, 
 	float msecTotal = 0.0f;
     cudaEventElapsedTime(&msecTotal, start, stop);
 
-    printf("GPU Time= %.3f msec\n", msecTotal);
+    printf("GPU Child List Explore Time= %.3f msec\n", msecTotal);
 
 	// Copy result back to host
 	int *gpu_result = (int *) malloc(size * sizeof(int));
 	cudaMemcpy(gpu_result, d_cost, size * sizeof(int), cudaMemcpyDeviceToHost);
 
 	bool isCorrect = true;
-
-	for (int j = 0; j < size; j++) {
-		printf("%i cost: %i\n", j, gpu_result[j]);
-	}
-
 
 	for (int i = 0; i < size; i++) {
 		if (synchResult[i] != gpu_result[i]) {
@@ -353,7 +344,6 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 				complete = false;
 			}
 		}
-		printf("\n");
     }
 
 	
@@ -367,18 +357,13 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 	float msecTotal = 0.0f;
     cudaEventElapsedTime(&msecTotal, start, stop);
 
-    printf("GPU Time= %.3f msec\n", msecTotal);
+    printf("GPU Wave Time= %.3f msec\n", msecTotal);
 
 	// Copy result back to host
 	int *gpu_result = (int *) malloc(size * sizeof(int));
 	cudaMemcpy(gpu_result, d_cost, size * sizeof(int), cudaMemcpyDeviceToHost);
 
 	bool isCorrect = true;
-
-	for (int j = 0; j < size; j++) {
-		printf("%i cost: %i\n", j, gpu_result[j]);
-	}
-
 
 	for (int i = 0; i < size; i++) {
 		if (synchResult[i] != gpu_result[i]) {
