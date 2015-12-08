@@ -134,28 +134,28 @@ Node* generateGraph(int nNodes) {
 }
 
 void exploreChild(Node* child, vector< vector<Node*> >* path, int depth, Node* nodes) {
-	//printf("Explore Child%i Depth: %i\n", child->getValue(), depth);
-	
-	if (child->getNumChildren() > 0) {
+	int numChildren = child->getNumChildren();
+	if (numChildren > 0) {
+		bool toExplore = new bool[numChildren];
 		vector<Node*> newPath;
 		if (path->size() <= depth) {
 			path->push_back(newPath);
 		}
 		vector<Node*>* currentPath = &(path->at(depth));
-		//printf("%i numChildren: %i\n", child->getValue(), child->getNumChildren());
-		//child->printNode();
-		for (int i = 0; i < child->getNumChildren(); i++) {
+		
+		for (int i = 0; i < numChildren; i++) {
 			Node* newChild = &nodes[child->getChildren()[i]];
 			if (newChild->getExplored() == 0) {
 				currentPath->push_back(newChild);
 				newChild->setExplored(1);
+				toExplore[i] = true;
 			}
 		}
 
 		// Explore loop after push loop so it is actually BFS
-		for (int i = 0; i < child->getNumChildren(); i++) {
+		for (int i = 0; i < numChildren; i++) {
 			Node* newChild = &nodes[child->getChildren()[i]];
-			if (newChild->getExplored() == 0) {
+			if (toExplore[i]) {
 				exploreChild(newChild, path, depth + 1, nodes);	
 			}
 		}
@@ -433,6 +433,8 @@ int main (int argc, char **argv) {
 	cudaFree(d_graph); 
 	cudaFree(d_size);
 	cudaFree(d_children);
+	cudaFree(d_numChildren);
+	cudaFree(d_maxChildren);
 
 	return 0;
 }
