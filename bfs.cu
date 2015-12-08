@@ -213,7 +213,7 @@ int* bfs(Node* nodes, int size) {
 				}
 			}
 		}
-		printf("%s\n", wave.front()->printNode());
+		wave.front()->printNode();
 	}
 
 	return cost;
