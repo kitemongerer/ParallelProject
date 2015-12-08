@@ -149,6 +149,8 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth, Node* n
 				currentPath->push_back(newChild);
 				newChild->setExplored(1);
 				toExplore[i] = true;
+			} else {
+				toExplore[i] = false;
 			}
 		}
 
