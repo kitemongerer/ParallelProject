@@ -207,8 +207,8 @@ int* bfs(Node* nodes, int size) {
 			currentNode->setExplored(1);
 			int *children = currentNode->getChildren();
 			for (int i = 0; i < currentNode->getNumChildren(); i++) {
-				if (children[i].getExplored() == 0) {
-					wave.push(children[i]);
+				if (nodes[children[i]].getExplored() == 0) {
+					wave.push(&nodes[children[i]]);
 					nodes[children[i]].setExplored(1);
 					cost[children[i]] = depth + 1;
 				}
