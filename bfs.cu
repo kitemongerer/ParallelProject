@@ -197,12 +197,13 @@ int* bfs(Node* nodes, int size) {
 	Node* currentNode = &nodes[0];
 	queue<Node*> wave;
 	wave.push(currentNode);
-	cost[currentNode->value()] = 0;
+	cost[0] = 0;
 
 	int depth = 0;
 	while (!wave.empty()) {
 		while (depth == cost[wave.front()->getValue()]) {
-			currentNode = wave.pop();
+			currentNode = wave.front();
+			wave.pop();
 			currentNode->setExplored(1);
 			int *children = currentNode->getChildren();
 			for (int i = 0; i < currentNode->getNumChildren(); i++) {
