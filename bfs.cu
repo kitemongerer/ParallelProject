@@ -690,9 +690,14 @@ int main (int argc, char **argv) {
 	int* children = generateChildren(nodes, size, maxEdgesPerNode);
 	int* numChildren = transformNumChildren(nodes, size);
 	int* parentPtr = transformParentPtr(nodes, size);
-	int numEdges = parentPtr[size + 1];
+	int numEdges = parentPtr[size];
 	int* parent = transformParents(nodes, size, parentPtr);
 	
+	for (int i = 0; i < size; i++) {
+		for (int j = parentPtr[i]; j < parentPtr[i + 1]; j++) {
+			printf("%i parent: %i\n", i, parent[j]);
+		}
+	}
 
 	Node* d_graph;
 	int *d_children, *d_size, *d_maxChildren, *d_numChildren, *d_parent, *d_parentPtr;
