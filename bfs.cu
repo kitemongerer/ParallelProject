@@ -136,7 +136,7 @@ Node* generateGraph(int nNodes) {
 void exploreChild(Node* child, vector< vector<Node*> >* path, int depth, Node* nodes) {
 	int numChildren = child->getNumChildren();
 	if (numChildren > 0) {
-		bool toExplore = new bool[numChildren];
+		bool *toExplore = new bool[numChildren];
 		vector<Node*> newPath;
 		if (path->size() <= depth) {
 			path->push_back(newPath);
