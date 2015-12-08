@@ -558,6 +558,8 @@ int main (int argc, char **argv) {
 
 	callChildListExploreWave(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
 
+	callFlipFlopWaveExplore(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
+
 
 	// Cleanup
 	cudaFree(d_graph); 
