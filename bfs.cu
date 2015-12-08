@@ -249,6 +249,7 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 
 	for (int i = 0; i < size; i++) {
 		if (synchResult[i] != gpu_result[i]) {
+			isCorrect = false;
 			printf("%i CPU: %i GPU:%i\n", i, synchResult[i], gpu_result[i]);
 		}
 	}
@@ -258,19 +259,6 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 	} else {
 		printf("The results match\n");
 	}
-
-	/*for (int i = 0; i < size; i++) {
-		//printf("%i GPU: %i CPU: %i arr: %i\n", i, gpu_result[i], result[i], array[i]);
-		//Print the result if it is wrong
-		if (result[i] != gpu_result[i]) {
-			printf("%i GPU: %i CPU: %i\n", i, gpu_result[i], result[i]);
-			isCorrect = false;
-		}
-
-		if(i % TBS == TBS - 1 || i % TBS == 0) {
-			//printf("%i GPU: %i CPU: %i\n", i, gpu_result[i], result[i]);
-		} 
-	}*/
 }
 
 int main (int argc, char **argv) {
