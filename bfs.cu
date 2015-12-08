@@ -279,7 +279,7 @@ int* transformParentPtr(Node* nodes, int size) {
 		}
 	}
 	
-	for (int i = 1; i < size; i++) {
+	for (int i = 1; i < size + 1; i++) {
 		result[i] = result[i] + result[i - 1];
 	}
 	return result;
@@ -298,6 +298,7 @@ int* transformParents(Node* nodes, int size, int* parentPtr) {
 		if (node->getNumChildren() > 0) {
 			int *children = node->getChildren();
 			for (int j = 0; j < node->getNumChildren(); j++) {
+				printf("node: %i child: %i parentPtr: %i\n", i, children[j], curIdx[children[j]]);
 				int child = children[j];
 				result[curIdx[child]] = i;
 				curIdx[child] = curIdx[child] + 1;
