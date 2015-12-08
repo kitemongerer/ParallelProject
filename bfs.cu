@@ -201,6 +201,7 @@ int* bfs(Node* nodes, int size) {
 	while (!wave.empty()) {
 		depth = cost[wave.front()->getValue()];
 		while (depth == cost[wave.front()->getValue()]) {
+			wave.front()->printNode();
 			currentNode = wave.front();
 			wave.pop();
 			currentNode->setExplored(1);
