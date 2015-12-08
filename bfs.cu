@@ -200,7 +200,7 @@ int* bfs(Node* nodes, int size) {
 	int depth = 0;
 	while (!wave.empty()) {
 		depth = cost[wave.front()->getValue()];
-		while (depth == cost[wave.front()->getValue()]) {
+		while (!wave.empty() && depth == cost[wave.front()->getValue()]) {
 			wave.front()->printNode();
 			currentNode = wave.front();
 			wave.pop();
