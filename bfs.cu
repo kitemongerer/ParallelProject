@@ -205,12 +205,14 @@ int* bfs(Node* nodes, int size) {
 			currentNode = wave.front();
 			wave.pop();
 			currentNode->setExplored(1);
-			int *children = currentNode->getChildren();
-			for (int i = 0; i < currentNode->getNumChildren(); i++) {
-				if (nodes[children[i]].getExplored() == 0) {
-					nodes[children[i]].setExplored(1);
-					cost[children[i]] = depth + 1;
-					wave.push(&nodes[children[i]]);
+			if (currentNode->getNumChildren() > 0) {
+				int *children = currentNode->getChildren();
+				for (int i = 0; i < currentNode->getNumChildren(); i++) {
+					if (nodes[children[i]].getExplored() == 0) {
+						nodes[children[i]].setExplored(1);
+						cost[children[i]] = depth + 1;
+						wave.push(&nodes[children[i]]);
+					}
 				}
 			}
 		}
