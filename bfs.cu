@@ -404,7 +404,7 @@ int main (int argc, char **argv) {
 	int* numChildren = transformNumChildren(nodes, size);
 
 	Node* d_graph;
-	int *d_children, *d_size, *d_maxChildren;
+	int *d_children, *d_size, *d_maxChildren, *d_numChildren;
 
 	// Allocate space for device copies
 	cudaMalloc((void **)&d_graph, size * sizeof(Node));
