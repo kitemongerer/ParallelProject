@@ -40,8 +40,6 @@ __global__ void backwardsWave(int *d_waveMask, int *d_nextWaveMask, int *d_child
 	int idx = blockIdx.x * TBS + threadIdx.x;
 
 	if (idx < *d_size && d_waveMask[idx] == 0) {
-		int numChildren = d_numChildren[idx];
-		
 		// Loop through all children
 		for (int i = 0; i < *d_size * *d_maxChildren; i++) {
 			if (d_children[i] == idx) {
@@ -215,6 +213,7 @@ int* bfs(Node* nodes, int size) {
 				}
 			}
 		}
+		printf("%s\n", wave.front()->printNode());
 	}
 
 	return cost;
