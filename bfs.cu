@@ -70,17 +70,6 @@ __global__ void setPreviousExplored(int *d_waveMask, int *d_nextWaveMask, int *d
 		}
 	}
 }
-//Multiplies each element of sparse matrix by the correct vector element and puts the result back in the matrix
-/*__global__ void cachedVisitBFS(Node *d_graph, int *d_size) {
-	int idx = blockIdx.x * TBS + threadIdx.x;
-	if (idx == 0) {
-		int waveSize = 1;
-		int *currentWave = new int[waveSize];
-		currentWave[0] = d_graph[0].getValue();
-
-		int *nextWave = exploreWave(currentWave, d_graph, waveSize);
-	}
-}*/
 
 int* generateChildren(Node *nodes, int nNodes, int maxEdgesPerNode) {
 	int* children = new int[nNodes * maxEdgesPerNode];
@@ -167,7 +156,17 @@ vector< vector<Node*> > bfs(Node* nodes, int size) {
 	return path;
 }
 
-void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int size, int *d_maxChildren, vector< vector<Node*> > path) {
+int * transformBfs(vector< vector<Node*> > path, int size) {
+	int *result = new int[size];
+	for (int i = 0; i < path.size(); i++) {
+		for (int j = 0; j < path[i].size(); j++) {
+			result[path[i][j]->getValue()] = i;
+		}
+	}
+	return result;
+}
+
+void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int size, int *d_maxChildren, int *synchResult) {
 	cudaEvent_t start;
 	cudaEventCreate(&start);
     cudaEvent_t stop;
@@ -248,13 +247,10 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 	}
 
 
-	for (int i = 0; i < path.size(); i++) {
-		isCorrect = true;
-		printf("%i - ", i);
-		for (int j = 0; j < path[i].size(); j++) {
-			printf(" %i ", path[i][j]->getValue());
+	for (int i = 0; i < size; i++) {
+		if (synchResult[i] != gpu_result[i]) {
+			printf("%i CPU: %i GPU:%i\n", i, synchResult[i], gpu_result[i]);
 		}
-		printf("\n");
 	}
 
 	if (!isCorrect) {
@@ -307,8 +303,9 @@ int main (int argc, char **argv) {
 
 	//Synchronouse bfs
 	vector< vector<Node*> > path = bfs(nodes, size);
+	int *synchResult = transformBfs(path, size);
 
-	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, path);
+	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
 
 	// Cleanup
 	cudaFree(d_graph); 
