@@ -46,11 +46,9 @@ __global__ void backwardsWave(int *d_waveMask, int *d_nextWaveMask, int *d_child
 		for (int i = 0; i < *d_size * *d_maxChildren; i++) {
 			if (d_children[i] == idx) {
 				int parent = i / *d_maxChildren;
-			
-				atomicCAS(&d_nextWaveMask[child],0,1);
-						
-				if (d_waveMask[child] == 0) {
-					d_cost[child] = d_cost[idx] + 1;
+				if (d_waveMask[parent] == 1) {
+					atomicCAS(&d_nextWaveMask[idx], 0, 1);
+					d_cost[idx] = d_cost[parent] + 1;
 				}
 			}
 		}
@@ -198,16 +196,16 @@ int* bfs(Node* nodes, int size) {
 
 	Node* currentNode = &nodes[0];
 	queue<Node*> wave;
-	firstPath.push(currentNode);
-	cost[currentNode.value()] = 0;
+	wave.push(currentNode);
+	cost[currentNode->value()] = 0;
 
 	int depth = 0;
 	while (!wave.empty()) {
 		while (depth == cost[wave.front()->getValue()]) {
 			currentNode = wave.pop();
 			currentNode->setExplored(1);
-			int *children = currentNode.getChildren();
-			for (int i = 0; i < currentNode.getNumChildren(); i++) {
+			int *children = currentNode->getChildren();
+			for (int i = 0; i < currentNode->getNumChildren(); i++) {
 				if (children[i].getExplored() == 0) {
 					wave.push(children[i]);
 					nodes[children[i]].setExplored(1);
