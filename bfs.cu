@@ -274,7 +274,7 @@ int* transformParentPtr(Node* nodes, int size) {
 			int *children = node->getChildren();
 			for (int j = 0; j < node->getNumChildren(); j++) {
 				int child = children[j];
-				result[child] += 1;
+				result[child + 1] += 1;
 			}
 		}
 	}
