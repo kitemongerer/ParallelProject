@@ -190,7 +190,7 @@ int* bfs(Node* nodes, int size) {
 	for (int i = 0; i < size; i++) {
 		cost[i] = -1;
 	}
-
+	printf("\n\n\n\n\n\n");
 
 	Node* currentNode = &nodes[0];
 	queue<Node*> wave;
@@ -208,13 +208,12 @@ int* bfs(Node* nodes, int size) {
 			int *children = currentNode->getChildren();
 			for (int i = 0; i < currentNode->getNumChildren(); i++) {
 				if (nodes[children[i]].getExplored() == 0) {
-					wave.push(&nodes[children[i]]);
 					nodes[children[i]].setExplored(1);
 					cost[children[i]] = depth + 1;
+					wave.push(&nodes[children[i]]);
 				}
 			}
 		}
-		wave.front()->printNode();
 	}
 
 	return cost;
@@ -552,9 +551,9 @@ int main (int argc, char **argv) {
 	//vector< vector<Node*> > path = bfs(nodes, size);
 	int *synchResult = bfs(nodes, size);
 
-	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
+	//callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
 
-	callChildListExploreWave(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
+	//callChildListExploreWave(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
 
 
 	// Cleanup
