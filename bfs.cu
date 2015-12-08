@@ -114,7 +114,7 @@ Node* generateGraph(int nNodes) {
 
 void exploreChild(Node* child, vector< vector<Node*> >* path, int depth, Node* nodes) {
 	//printf("Explore Child%i Depth: %i\n", child->getValue(), depth);
-	child->setExplored(1);
+	
 	if (child->getNumChildren() > 0) {
 		vector<Node*> newPath;
 		if (path->size() <= depth) {
@@ -127,6 +127,7 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth, Node* n
 			Node* newChild = &nodes[child->getChildren()[i]];
 			if (newChild->getExplored() == 0) {
 				currentPath->push_back(newChild);
+				newChild->setExplored(1);
 			}
 		}
 
@@ -151,6 +152,7 @@ vector< vector<Node*> > bfs(Node* nodes, int size) {
 	firstPath.push_back(currentNode);
 	path.push_back(firstPath);
 
+	currentNode->setExplored(1);
 	exploreChild(currentNode, &path, 1, nodes);
 
 	return path;
@@ -165,6 +167,14 @@ int* transformBfs(vector< vector<Node*> > path, int size) {
 			result[path[i][j]->getValue()] = i;
 		}
 		printf("\n");
+	}
+	return result;
+}
+
+int* transformNumChildren(Node* nodes, int size) {
+	int *result = new int[size];
+	for (int i = 0; i < size; i++) {
+		result[i] = nodes[i].getNumChildren();
 	}
 	return result;
 }
@@ -276,6 +286,7 @@ int main (int argc, char **argv) {
 
 	Node* nodes = generateGraph(size);
 	int* children = generateChildren(nodes, size, maxEdgesPerNode);
+	int* numChildren = transformNumChildren(nodes, size);
 
 	Node* d_graph;
 	int *d_children, *d_size, *d_maxChildren;
