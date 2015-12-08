@@ -37,6 +37,7 @@ public:
 };
 
 __global__ void backwardsWave(int *d_waveMask, int *d_nextWaveMask, int *d_children, int *d_numChildren, int *d_cost, int *d_size, int *d_maxChildren) {
+	printf("REVERSE IT YO\n");
 	int idx = blockIdx.x * TBS + threadIdx.x;
 
 	if (idx < *d_size && d_waveMask[idx] == 0) {
@@ -553,9 +554,9 @@ int main (int argc, char **argv) {
 	//vector< vector<Node*> > path = bfs(nodes, size);
 	int *synchResult = bfs(nodes, size);
 
-	//callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
+	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
 
-	//callChildListExploreWave(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
+	callChildListExploreWave(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
 
 
 	// Cleanup
