@@ -2,6 +2,7 @@
 #include <assert.h>
 #include <math.h>
 #include <vector>
+#include <queue>
 
 // CUDA runtime
 #include <cuda_runtime.h>
@@ -34,6 +35,30 @@ public:
 	void setExplored(int);
 	__device__ int parallelSetExplored(int);
 };
+
+__global__ void backwardsWave(int *d_waveMask, int *d_nextWaveMask, int *d_children, int *d_numChildren, int *d_cost, int *d_size, int *d_maxChildren) {
+	int idx = blockIdx.x * TBS + threadIdx.x;
+
+	if (idx < *d_size && d_waveMask[idx] == 0) {
+		int numChildren = d_numChildren[idx];
+		
+		// Loop through all children
+		for (int i = 0; i < *d_size * *d_maxChildren; i++) {
+			if (d_children[i] == idx) {
+				int parent = i / *d_maxChildren;
+			
+				atomicCAS(&d_nextWaveMask[child],0,1);
+						
+				if (d_waveMask[child] == 0) {
+					d_cost[child] = d_cost[idx] + 1;
+				}
+			}
+		}
+	}
+	if(idx < *d_size && d_waveMask[idx] == 2){
+		d_nextWaveMask[idx] = 2;
+	}
+}
 
 __global__ void childListExploreWave(int *d_waveMask, int *d_nextWaveMask, int *d_children, int *d_numChildren, int *d_cost, int *d_size, int *d_maxChildren) {
 	int idx = blockIdx.x * TBS + threadIdx.x;
@@ -164,18 +189,36 @@ void exploreChild(Node* child, vector< vector<Node*> >* path, int depth, Node* n
 	return;
 }
 
-vector< vector<Node*> > bfs(Node* nodes, int size) {
-	vector< vector<Node*> > path;
+int* bfs(Node* nodes, int size) {
+	int* cost = new int[size];
+	for (int i = 0; i < size; i++) {
+		cost[i] = -1;
+	}
+
 
 	Node* currentNode = &nodes[0];
-	vector<Node*> firstPath;
-	firstPath.push_back(currentNode);
-	path.push_back(firstPath);
+	queue<Node*> wave;
+	firstPath.push(currentNode);
+	cost[currentNode.value()] = 0;
 
-	currentNode->setExplored(1);
-	exploreChild(currentNode, &path, 1, nodes);
+	int depth = 0;
+	while (!wave.empty()) {
+		while (depth == cost[wave.front()->getValue()]) {
+			currentNode = wave.pop();
+			currentNode->setExplored(1);
+			int *children = currentNode.getChildren();
+			for (int i = 0; i < currentNode.getNumChildren(); i++) {
+				if (children[i].getExplored() == 0) {
+					wave.push(children[i]);
+					nodes[children[i]].setExplored(1);
+					cost[children[i]] = depth + 1;
+				}
+			}
+		}
+		depth++;
+	}
 
-	return path;
+	return cost;
 }
 
 int* transformBfs(vector< vector<Node*> > path, int size) {
@@ -411,8 +454,8 @@ int main (int argc, char **argv) {
 	cudaMemcpy(d_numChildren, numChildren, size * sizeof(int), cudaMemcpyHostToDevice);
 
 	//Synchronouse bfs
-	vector< vector<Node*> > path = bfs(nodes, size);
-	int *synchResult = transformBfs(path, size);
+	//vector< vector<Node*> > path = bfs(nodes, size);
+	int *synchResult = bfs(nodes, size);
 
 	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
 
