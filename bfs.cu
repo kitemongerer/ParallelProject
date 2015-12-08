@@ -692,6 +692,10 @@ int main (int argc, char **argv) {
 	int* parentPtr = transformParentPtr(nodes, size);
 	int numEdges = parentPtr[size];
 	int* parent = transformParents(nodes, size, parentPtr);
+
+	for (int i = 0; i < size + 1; i++) {
+		printf("%i parentPtr: %i\n", i, parentPtr[i]);
+	}
 	
 	for (int i = 0; i < size; i++) {
 		for (int j = parentPtr[i]; j < parentPtr[i + 1]; j++) {
