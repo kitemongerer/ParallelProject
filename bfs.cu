@@ -741,7 +741,7 @@ int main (int argc, char **argv) {
 
 	callChildListExploreWave(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
 
-	callFlipFlopWaveExplore(d_size, d_children, d_numChildren, size, d_maxChildren, maxEdgesPerNode, synchResult);
+	//callFlipFlopWaveExplore(d_size, d_children, d_numChildren, size, d_maxChildren, maxEdgesPerNode, synchResult);
 
 	callFlipFlopParent(d_size, d_children, d_numChildren, d_maxChildren, d_parent, d_parentPtr, size, maxEdgesPerNode, synchResult);
 
