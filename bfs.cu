@@ -348,7 +348,7 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
     int curWaveSize = 1;
     while(!complete) {
     	// Launch kernel on GPU
-    	if (completed < (maxChildren * 2 - 1) / (maxChildren * 2) * size) {
+    	if (completed < (maxChildren * maxChildren - 1) / (maxChildren * maxChildren) * size) {
     		childListExploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
     	} else {
     		parentListBackwardsWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_parent, d_parentPtr, d_cost, d_size);
