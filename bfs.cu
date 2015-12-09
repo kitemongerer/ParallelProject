@@ -307,7 +307,7 @@ int* transformParents(Node* nodes, int size, int* parentPtr) {
 	return result;
 }
 
-void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d_maxChildren, int *d_parent, int *d_parentPtr, int size, int *synchResult) {
+void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d_maxChildren, int *d_parent, int *d_parentPtr, int size, int maxChildren, int *synchResult) {
 	cudaEvent_t start;
 	cudaEventCreate(&start);
     cudaEvent_t stop;
@@ -348,7 +348,7 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
     int curWaveSize = 1;
     while(!complete) {
     	// Launch kernel on GPU
-    	if (completed < 9 / 10 * size) {
+    	if (completed < (maxChildren * 2 - 1) / (maxChildren * 2) * size) {
     		childListExploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
     	} else {
     		parentListBackwardsWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_parent, d_parentPtr, d_cost, d_size);
@@ -746,7 +746,7 @@ int main (int argc, char **argv) {
 
 	callFlipFlopWaveExplore(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
 
-	callFlipFlopParent(d_size, d_children, d_numChildren, d_maxChildren, d_parent, d_parentPtr, size, synchResult);
+	callFlipFlopParent(d_size, d_children, d_numChildren, d_maxChildren, d_parent, d_parentPtr, size, maxEdgesPerNode, synchResult);
 
 	// Cleanup
 	cudaFree(d_graph); 
