@@ -46,6 +46,7 @@ __global__ void parentListBackwardsWave(int *d_waveMask, int *d_nextWaveMask, in
 			if (d_waveMask[d_parent[i]] == 1) {
 				atomicCAS(&d_nextWaveMask[idx], 0, 1);
 				d_cost[idx] = d_cost[d_parent[i]] + 1;
+				break;
 			}
 		}
 	}
@@ -65,6 +66,7 @@ __global__ void backwardsWave(int *d_waveMask, int *d_nextWaveMask, int *d_child
 				if (d_waveMask[parent] == 1) {
 					atomicCAS(&d_nextWaveMask[idx], 0, 1);
 					d_cost[idx] = d_cost[parent] + 1;
+					break;
 				}
 			}
 		}
