@@ -215,7 +215,6 @@ int* bfs(Node* nodes, int size) {
 	while (!wave.empty()) {
 		depth = cost[wave.front()->getValue()];
 		while (!wave.empty() && depth == cost[wave.front()->getValue()]) {
-			wave.front()->printNode();
 			currentNode = wave.front();
 			wave.pop();
 			currentNode->setExplored(1);
@@ -342,10 +341,9 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
     
     bool complete = false;
     int completed = 0;
-    int nextWaveSize = 1;
     while(!complete) {
     	// Launch kernel on GPU
-    	if (nextWaveSize < (size - completed)) {
+    	if (completed < size / 2) {
     		childListExploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
     	} else {
     		parentListBackwardsWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_parent, d_parentPtr, d_cost, d_size);
@@ -358,11 +356,9 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
 		cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 
 		complete = true;
-		nextWaveSize = 0;
 		cudaMemcpy(waveMask, d_waveMask, size * sizeof(int), cudaMemcpyDeviceToHost);
 		for(int i = 0 ; i < size; i++) {
 			if(waveMask[i] == 1) {
-				nextWaveSize++;
 				complete = false;
 			} else if (waveMask[i] == 2) {
 				completed += 1;
