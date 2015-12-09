@@ -3,6 +3,7 @@
 #include <math.h>
 #include <vector>
 #include <queue>
+#include <ctime>
 
 // CUDA runtime
 #include <cuda_runtime.h>
@@ -319,8 +320,6 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
 
 
     int gridSz = ceil(((float) size) / TBS);
-    // Record the start event
-    cudaEventRecord(start, NULL);
 
     int *waveMask = new int[size];
     int *nextWaveMask = new int[size]; 
@@ -338,6 +337,9 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
     cudaMemcpy(d_cost, cost, size * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_waveMask, waveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
+
+	// Record the start event
+    cudaEventRecord(start, NULL);
     
     bool complete = false;
     int completed = 0;
@@ -415,8 +417,6 @@ void callFlipFlopWaveExplore(int *d_size, int *d_children, int *d_numChildren, i
 
 
     int gridSz = ceil(((float) size) / TBS);
-    // Record the start event
-    cudaEventRecord(start, NULL);
 
     int *waveMask = new int[size];
     int *nextWaveMask = new int[size]; 
@@ -434,6 +434,9 @@ void callFlipFlopWaveExplore(int *d_size, int *d_children, int *d_numChildren, i
     cudaMemcpy(d_cost, cost, size * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_waveMask, waveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
+
+	// Record the start event
+    cudaEventRecord(start, NULL);
     
     bool complete = false;
     int completed = 0;
@@ -510,8 +513,6 @@ void callChildListExploreWave(int *d_size, int *d_children, int *d_numChildren, 
 
 
     int gridSz = ceil(((float) size) / TBS);
-    // Record the start event
-    cudaEventRecord(start, NULL);
 
     int *waveMask = new int[size];
     int *nextWaveMask = new int[size]; 
@@ -530,6 +531,9 @@ void callChildListExploreWave(int *d_size, int *d_children, int *d_numChildren, 
 	cudaMemcpy(d_waveMask, waveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
     
+	// Record the start event
+    cudaEventRecord(start, NULL);
+
     bool complete = false;
     while(!complete) {
 
@@ -598,8 +602,6 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 
 
     int gridSz = ceil(((float) size) / TBS);
-    // Record the start event
-    cudaEventRecord(start, NULL);
 
     int *waveMask = new int[size];
     int *nextWaveMask = new int[size]; 
@@ -618,6 +620,9 @@ void callDeviceCachedVisitBFS(Node *d_graph, int *d_size, int *d_children, int s
 	cudaMemcpy(d_waveMask, waveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 	cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
     
+	// Record the start event
+    cudaEventRecord(start, NULL);
+
     bool complete = false;
     while(!complete) {
 
@@ -722,7 +727,13 @@ int main (int argc, char **argv) {
 
 	//Synchronouse bfs
 	//vector< vector<Node*> > path = bfs(nodes, size);
+	clock_t start;
+	clock_t end;
+	start = clock();
 	int *synchResult = bfs(nodes, size);
+	end = clock();
+
+	printf("CPU Time= %.3f msec\n", (start - end) / (double) (CLOCKS_PER_SEC / 1000));
 
 	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
 
