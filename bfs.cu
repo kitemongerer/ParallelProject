@@ -727,13 +727,13 @@ int main (int argc, char **argv) {
 
 	//Synchronouse bfs
 	//vector< vector<Node*> > path = bfs(nodes, size);
-	clock_t start;
-	clock_t end;
-	start = clock();
+	time_t start;
+	time_t end;
+	start = time(0);
 	int *synchResult = bfs(nodes, size);
-	end = clock();
+	end = time(0);
 
-	printf("CPU Time= %.3f msec\n", (start - end) / (double) (CLOCKS_PER_SEC / 1000));
+	printf("CPU Time= %.3f msec\n", difftime(end, start) * 1000.0);
 
 	callDeviceCachedVisitBFS(d_graph, d_size, d_children, size, d_maxChildren, synchResult);
 
