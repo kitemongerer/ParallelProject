@@ -345,7 +345,6 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
     
     bool complete = false;
     int completed = 0;
-    int curWaveSize = 1;
     while(!complete) {
     	// Launch kernel on GPU
     	if (completed < (maxChildren * maxChildren - 1) / (maxChildren * maxChildren) * size) {
@@ -361,12 +360,10 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
 		cudaMemcpy(d_nextWaveMask, nextWaveMask, size * sizeof(int), cudaMemcpyHostToDevice);
 
 		complete = true;
-		curWaveSize = 0;
 		cudaMemcpy(waveMask, d_waveMask, size * sizeof(int), cudaMemcpyDeviceToHost);
 		for(int i = 0 ; i < size; i++) {
 			if(waveMask[i] == 1) {
 				complete = false;
-				curWaveSize++;
 			} else if (waveMask[i] == 2) {
 				completed += 1;
 			}
@@ -407,7 +404,7 @@ void callFlipFlopParent(int *d_size, int *d_children, int *d_numChildren, int *d
 }
 
 
-void callFlipFlopWaveExplore(int *d_size, int *d_children, int *d_numChildren, int size, int *d_maxChildren, int *synchResult) {
+void callFlipFlopWaveExplore(int *d_size, int *d_children, int *d_numChildren, int size, int *d_maxChildren, int maxChildren, int *synchResult) {
 	cudaEvent_t start;
 	cudaEventCreate(&start);
     cudaEvent_t stop;
@@ -447,7 +444,7 @@ void callFlipFlopWaveExplore(int *d_size, int *d_children, int *d_numChildren, i
     int completed = 0;
     while(!complete) {
     	// Launch kernel on GPU
-    	if (completed < size / 2) {
+    	if (completed < (maxChildren * maxChildren - 1) / (maxChildren * maxChildren) * size) {
     		childListExploreWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
     	} else {
     		backwardsWave<<<gridSz, TBS>>>(d_waveMask, d_nextWaveMask, d_children, d_numChildren, d_cost, d_size, d_maxChildren);
@@ -744,7 +741,7 @@ int main (int argc, char **argv) {
 
 	callChildListExploreWave(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
 
-	callFlipFlopWaveExplore(d_size, d_children, d_numChildren, size, d_maxChildren, synchResult);
+	callFlipFlopWaveExplore(d_size, d_children, d_numChildren, size, d_maxChildren, maxEdgesPerNode, synchResult);
 
 	callFlipFlopParent(d_size, d_children, d_numChildren, d_maxChildren, d_parent, d_parentPtr, size, maxEdgesPerNode, synchResult);
 
